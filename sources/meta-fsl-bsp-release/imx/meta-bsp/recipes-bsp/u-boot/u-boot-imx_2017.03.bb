@@ -16,6 +16,8 @@ UBOOT_SRC ?= "git://source.codeaurora.org/external/imx/uboot-imx.git;protocol=ht
 SRC_URI = "${UBOOT_SRC};branch=${SRCBRANCH}"
 SRCREV = "a2fea67d3eb3092f19f250d53a4a27fa1a0c815f"
 
+SRC_URI += "file://0001_E9_MinimalBoot.patch;md5=78e1964f3acf3be622813684f5cbc019"
+
 S = "${WORKDIR}/git"
 
 inherit fsl-u-boot-localversion

@@ -1,3 +1,5 @@
 build-xwayland
 downloads
 build.sh
+
+*.swp

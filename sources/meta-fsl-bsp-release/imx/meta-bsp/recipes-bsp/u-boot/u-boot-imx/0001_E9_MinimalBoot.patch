@@ -1,0 +1,1536 @@
+diff --git a/arch/arm/imx-common/cpu.c b/arch/arm/imx-common/cpu.c
+index b4c0492..db3e545 100644
+--- a/arch/arm/imx-common/cpu.c
++++ b/arch/arm/imx-common/cpu.c
+@@ -298,9 +298,6 @@ void arch_preboot_os(void)
+ 	disable_sata_clock();
+ #endif
+ #endif
+-#if defined(CONFIG_LDO_BYPASS_CHECK)
+-	ldo_mode_set(check_ldo_bypass());
+-#endif
+ #if defined(CONFIG_VIDEO_IPUV3)
+ 	/* disable video before launching O/S */
+ 	ipuv3_fb_shutdown();
+diff --git a/board/freescale/mx6sabresd/mx6q_tater.cfg b/board/freescale/mx6sabresd/mx6q_tater.cfg
+index e69de29..ba68d37 100644
+--- a/board/freescale/mx6sabresd/mx6q_tater.cfg
++++ b/board/freescale/mx6sabresd/mx6q_tater.cfg
+@@ -0,0 +1,154 @@
++/*
++ * Copyright (C) 2011-2016 Freescale Semiconductor, Inc.
++ * Jason Liu <r64343@freescale.com>
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ *
++ * Refer doc/README.imximage for more details about how-to configure
++ * and create imximage boot image
++ *
++ * The syntax is taken as close as possible with the kwbimage
++ */
++
++#define __ASSEMBLY__
++#include <config.h>
++
++/* image version */
++IMAGE_VERSION 2
++
++/*
++ * Boot Device : one of
++ * spi, sd (the board has no nand neither onenand)
++ */
++BOOT_FROM      sd
++
++#ifdef CONFIG_USE_IMXIMG_PLUGIN
++/*PLUGIN    plugin-binary-file    IRAM_FREE_START_ADDR*/
++PLUGIN board/freescale/mx6sabresd/plugin.bin 0x00907000
++#else
++
++#ifdef CONFIG_SECURE_BOOT
++CSF CONFIG_CSF_SIZE
++#endif
++
++/*
++ * Device Configuration Data (DCD)
++ *
++ * Each entry must have the format:
++ * Addr-type           Address        Value
++ *
++ * where:
++ *      Addr-type register length (1,2 or 4 bytes)
++ *      Address   absolute address of the register
++ *      value     value to be stored in the register
++ */
++DATA 4 0x020e0798 0x000C0000
++DATA 4 0x020e0758 0x00000000
++DATA 4 0x020e0588 0x00000030
++DATA 4 0x020e0594 0x00000030
++DATA 4 0x020e056c 0x00000030
++DATA 4 0x020e0578 0x00000030
++DATA 4 0x020e074c 0x00000030
++DATA 4 0x020e057c 0x00000030
++DATA 4 0x020e058c 0x00000000
++DATA 4 0x020e059c 0x00000030
++DATA 4 0x020e05a0 0x00000030
++DATA 4 0x020e078c 0x00000030
++DATA 4 0x020e0750 0x00020000
++DATA 4 0x020e05a8 0x00000018
++DATA 4 0x020e05b0 0x00000018
++DATA 4 0x020e0524 0x00000018
++DATA 4 0x020e051c 0x00000018
++DATA 4 0x020e0518 0x00000018
++DATA 4 0x020e050c 0x00000018
++DATA 4 0x020e05b8 0x00000018
++DATA 4 0x020e05c0 0x00000018
++DATA 4 0x020e0774 0x00020000
++DATA 4 0x020e0784 0x00000018
++DATA 4 0x020e0788 0x00000018
++DATA 4 0x020e0794 0x00000018
++DATA 4 0x020e079c 0x00000018
++DATA 4 0x020e07a0 0x00000018
++DATA 4 0x020e07a4 0x00000018
++DATA 4 0x020e07a8 0x00000018
++DATA 4 0x020e0748 0x00000018
++DATA 4 0x020e05ac 0x00000018
++DATA 4 0x020e05b4 0x00000018
++DATA 4 0x020e0528 0x00000018
++DATA 4 0x020e0520 0x00000018
++DATA 4 0x020e0514 0x00000018
++DATA 4 0x020e0510 0x00000018
++DATA 4 0x020e05bc 0x00000018
++DATA 4 0x020e05c4 0x00000018
++DATA 4 0x021b0800 0xa1390003
++DATA 4 0x021b080c 0x001F001F
++DATA 4 0x021b0810 0x001F001F
++DATA 4 0x021b480c 0x001F001F
++DATA 4 0x021b4810 0x001F001F
++DATA 4 0x021b083c 0x43180330
++DATA 4 0x021b0840 0x03180310
++DATA 4 0x021b483c 0x43200330
++DATA 4 0x021b4840 0x0320025C
++DATA 4 0x021b0848 0x40363838
++DATA 4 0x021b4848 0x38362E3C
++DATA 4 0x021b0850 0x3E3C4840
++DATA 4 0x021b4850 0x44364640
++DATA 4 0x021b081c 0x33333333
++DATA 4 0x021b0820 0x33333333
++DATA 4 0x021b0824 0x33333333
++DATA 4 0x021b0828 0x33333333
++DATA 4 0x021b481c 0x33333333
++DATA 4 0x021b4820 0x33333333
++DATA 4 0x021b4824 0x33333333
++DATA 4 0x021b4828 0x33333333
++DATA 4 0x021b08b8 0x00000800
++DATA 4 0x021b48b8 0x00000800
++DATA 4 0x021b0004 0x00020036
++DATA 4 0x021b0008 0x09444040
++DATA 4 0x021b000c 0x8A8F7955
++DATA 4 0x021b0010 0xFF328F64
++DATA 4 0x021b0014 0x01FF00DB
++DATA 4 0x021b0018 0x00001740
++DATA 4 0x021b001c 0x00008000
++DATA 4 0x021b002c 0x000026D2
++DATA 4 0x021b0030 0x008F1023
++DATA 4 0x021b0040 0x00000047
++DATA 4 0x021b0000 0x841A0000
++DATA 4 0x021b001c 0x04088032
++DATA 4 0x021b001c 0x00008033
++DATA 4 0x021b001c 0x00048031
++DATA 4 0x021b001c 0x09408030
++DATA 4 0x021b001c 0x04008040
++DATA 4 0x021b0020 0x00005800
++DATA 4 0x021b0818 0x00011117
++DATA 4 0x021b4818 0x00011117
++DATA 4 0x021b0004 0x00025576
++DATA 4 0x021b0404 0x00011006
++DATA 4 0x021b001c 0x00000000
++
++/* set the default clock gate to save power */
++DATA 4 0x020c4068 0x00C03F3F
++DATA 4 0x020c406c 0x0030FC03
++DATA 4 0x020c4070 0x0FFFC000
++DATA 4 0x020c4074 0x3FF00000
++DATA 4 0x020c4078 0x00FFF300
++DATA 4 0x020c407c 0x0F0000C3
++DATA 4 0x020c4080 0x000003FF
++
++/* enable AXI cache for VDOA/VPU/IPU */
++DATA 4 0x020e0010 0xF00000CF
++/* set IPU AXI-id0 Qos=0xf(bypass) AXI-id1 Qos=0x7 */
++DATA 4 0x020e0018 0x007F007F
++DATA 4 0x020e001c 0x007F007F
++
++/*
++ * Setup CCM_CCOSR register as follows:
++ *
++ * cko1_en  = 1	   --> CKO1 enabled
++ * cko1_div = 111  --> divide by 8
++ * cko1_sel = 1011 --> ahb_clk_root
++ *
++ * This sets CKO1 at ahb_clk_root/8 = 132/8 = 16.5 MHz
++ */
++DATA 4 0x020c4060 0x000000fb
++#endif
+diff --git a/board/freescale/mx6sabresd/mx6sabresd.c b/board/freescale/mx6sabresd/mx6sabresd.c
+index 9f60943..05b20df 100644
+--- a/board/freescale/mx6sabresd/mx6sabresd.c
++++ b/board/freescale/mx6sabresd/mx6sabresd.c
+@@ -87,8 +87,8 @@ int dram_init(void)
+ }
+ 
+ static iomux_v3_cfg_t const uart1_pads[] = {
+-	MX6_PAD_CSI0_DAT10__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
+-	MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
++	MX6_PAD_SD3_DAT7__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
++	MX6_PAD_SD3_DAT6__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL), 
+ };
+ 
+ static iomux_v3_cfg_t const enet_pads[] = {
+@@ -134,11 +134,6 @@ static iomux_v3_cfg_t const usdhc2_pads[] = {
+ 	MX6_PAD_SD2_DAT1__SD2_DATA1	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+ 	MX6_PAD_SD2_DAT2__SD2_DATA2	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+ 	MX6_PAD_SD2_DAT3__SD2_DATA3	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_NANDF_D4__SD2_DATA4	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_NANDF_D5__SD2_DATA5	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_NANDF_D6__SD2_DATA6	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_NANDF_D7__SD2_DATA7	| MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_NANDF_D2__GPIO2_IO02	| MUX_PAD_CTRL(NO_PAD_CTRL), /* CD */
+ };
+ 
+ static iomux_v3_cfg_t const usdhc3_pads[] = {
+@@ -150,8 +145,6 @@ static iomux_v3_cfg_t const usdhc3_pads[] = {
+ 	MX6_PAD_SD3_DAT3__SD3_DATA3 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
+ 	MX6_PAD_SD3_DAT4__SD3_DATA4 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
+ 	MX6_PAD_SD3_DAT5__SD3_DATA5 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_SD3_DAT6__SD3_DATA6 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
+-	MX6_PAD_SD3_DAT7__SD3_DATA7 | MUX_PAD_CTRL(USDHC_PAD_CTRL),
+ 	MX6_PAD_NANDF_D0__GPIO2_IO00    | MUX_PAD_CTRL(NO_PAD_CTRL), /* CD */
+ };
+ 
+@@ -337,7 +330,7 @@ struct fsl_esdhc_cfg usdhc_cfg[3] = {
+ 	{USDHC4_BASE_ADDR},
+ };
+ 
+-#define USDHC2_CD_GPIO	IMX_GPIO_NR(2, 2)
++#define USDHC2_CD_GPIO	IMX_GPIO_NR(1, 4)
+ #define USDHC3_CD_GPIO	IMX_GPIO_NR(2, 0)
+ 
+ int board_mmc_get_env_dev(int devno)
+@@ -959,370 +952,6 @@ int board_init(void)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_POWER
+-int power_init_board(void)
+-{
+-	struct pmic *pfuze;
+-	unsigned int reg;
+-	int ret;
+-
+-	pfuze = pfuze_common_init(I2C_PMIC);
+-	if (!pfuze)
+-		return -ENODEV;
+-
+-	if (is_mx6dqp())
+-		ret = pfuze_mode_init(pfuze, APS_APS);
+-	else
+-		ret = pfuze_mode_init(pfuze, APS_PFM);
+-
+-	if (ret < 0)
+-		return ret;
+-	/* VGEN3 and VGEN5 corrected on i.mx6qp board */
+-	if (!is_mx6dqp()) {
+-		/* Increase VGEN3 from 2.5 to 2.8V */
+-		pmic_reg_read(pfuze, PFUZE100_VGEN3VOL, &reg);
+-		reg &= ~LDO_VOL_MASK;
+-		reg |= LDOB_2_80V;
+-		pmic_reg_write(pfuze, PFUZE100_VGEN3VOL, reg);
+-
+-		/* Increase VGEN5 from 2.8 to 3V */
+-		pmic_reg_read(pfuze, PFUZE100_VGEN5VOL, &reg);
+-		reg &= ~LDO_VOL_MASK;
+-		reg |= LDOB_3_00V;
+-		pmic_reg_write(pfuze, PFUZE100_VGEN5VOL, reg);
+-	}
+-
+-	if (is_mx6dqp()) {
+-		/* set SW1C staby volatage 1.075V*/
+-		pmic_reg_read(pfuze, PFUZE100_SW1CSTBY, &reg);
+-		reg &= ~0x3f;
+-		reg |= 0x1f;
+-		pmic_reg_write(pfuze, PFUZE100_SW1CSTBY, reg);
+-
+-		/* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
+-		pmic_reg_read(pfuze, PFUZE100_SW1CCONF, &reg);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(pfuze, PFUZE100_SW1CCONF, reg);
+-
+-		/* set SW2/VDDARM staby volatage 0.975V*/
+-		pmic_reg_read(pfuze, PFUZE100_SW2STBY, &reg);
+-		reg &= ~0x3f;
+-		reg |= 0x17;
+-		pmic_reg_write(pfuze, PFUZE100_SW2STBY, reg);
+-
+-		/* set SW2/VDDARM step ramp up time to from 16us to 4us/25mV */
+-		pmic_reg_read(pfuze, PFUZE100_SW2CONF, &reg);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(pfuze, PFUZE100_SW2CONF, reg);
+-	} else {
+-		/* set SW1AB staby volatage 0.975V*/
+-		pmic_reg_read(pfuze, PFUZE100_SW1ABSTBY, &reg);
+-		reg &= ~0x3f;
+-		reg |= 0x1b;
+-		pmic_reg_write(pfuze, PFUZE100_SW1ABSTBY, reg);
+-
+-		/* set SW1AB/VDDARM step ramp up time from 16us to 4us/25mV */
+-		pmic_reg_read(pfuze, PFUZE100_SW1ABCONF, &reg);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(pfuze, PFUZE100_SW1ABCONF, reg);
+-
+-		/* set SW1C staby volatage 0.975V*/
+-		pmic_reg_read(pfuze, PFUZE100_SW1CSTBY, &reg);
+-		reg &= ~0x3f;
+-		reg |= 0x1b;
+-		pmic_reg_write(pfuze, PFUZE100_SW1CSTBY, reg);
+-
+-		/* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
+-		pmic_reg_read(pfuze, PFUZE100_SW1CCONF, &reg);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(pfuze, PFUZE100_SW1CCONF, reg);
+-	}
+-
+-	return 0;
+-}
+-
+-#elif defined(CONFIG_DM_PMIC_PFUZE100)
+-int power_init_board(void)
+-{
+-	struct udevice *dev;
+-	unsigned int reg;
+-	int ret;
+-
+-	dev = pfuze_common_init();
+-	if (!dev)
+-		return -ENODEV;
+-
+-	if (is_mx6dqp())
+-		ret = pfuze_mode_init(dev, APS_APS);
+-	else
+-		ret = pfuze_mode_init(dev, APS_PFM);
+-	if (ret < 0)
+-		return ret;
+-
+-	/* VGEN3 and VGEN5 corrected on i.mx6qp board */
+-	if (!is_mx6dqp()) {
+-		/* Increase VGEN3 from 2.5 to 2.8V */
+-		reg = pmic_reg_read(dev, PFUZE100_VGEN3VOL);
+-		reg &= ~LDO_VOL_MASK;
+-		reg |= LDOB_2_80V;
+-		pmic_reg_write(dev, PFUZE100_VGEN3VOL, reg);
+-
+-		/* Increase VGEN5 from 2.8 to 3V */
+-		reg = pmic_reg_read(dev, PFUZE100_VGEN5VOL);
+-		reg &= ~LDO_VOL_MASK;
+-		reg |= LDOB_3_00V;
+-		pmic_reg_write(dev, PFUZE100_VGEN5VOL, reg);
+-	}
+-
+-	if (is_mx6dqp()) {
+-		/* set SW1C staby volatage 1.075V*/
+-		reg = pmic_reg_read(dev, PFUZE100_SW1CSTBY);
+-		reg &= ~0x3f;
+-		reg |= 0x1f;
+-		pmic_reg_write(dev, PFUZE100_SW1CSTBY, reg);
+-
+-		/* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
+-		reg = pmic_reg_read(dev, PFUZE100_SW1CCONF);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(dev, PFUZE100_SW1CCONF, reg);
+-
+-		/* set SW2/VDDARM staby volatage 0.975V*/
+-		reg = pmic_reg_read(dev, PFUZE100_SW2STBY);
+-		reg &= ~0x3f;
+-		reg |= 0x17;
+-		pmic_reg_write(dev, PFUZE100_SW2STBY, reg);
+-
+-		/* set SW2/VDDARM step ramp up time to from 16us to 4us/25mV */
+-		reg = pmic_reg_read(dev, PFUZE100_SW2CONF);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(dev, PFUZE100_SW2CONF, reg);
+-	} else {
+-		/* set SW1AB staby volatage 0.975V*/
+-		reg = pmic_reg_read(dev, PFUZE100_SW1ABSTBY);
+-		reg &= ~0x3f;
+-		reg |= 0x1b;
+-		pmic_reg_write(dev, PFUZE100_SW1ABSTBY, reg);
+-
+-		/* set SW1AB/VDDARM step ramp up time from 16us to 4us/25mV */
+-		reg = pmic_reg_read(dev, PFUZE100_SW1ABCONF);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(dev, PFUZE100_SW1ABCONF, reg);
+-
+-		/* set SW1C staby volatage 0.975V*/
+-		reg = pmic_reg_read(dev, PFUZE100_SW1CSTBY);
+-		reg &= ~0x3f;
+-		reg |= 0x1b;
+-		pmic_reg_write(dev, PFUZE100_SW1CSTBY, reg);
+-
+-		/* set SW1C/VDDSOC step ramp up time to from 16us to 4us/25mV */
+-		reg = pmic_reg_read(dev, PFUZE100_SW1CCONF);
+-		reg &= ~0xc0;
+-		reg |= 0x40;
+-		pmic_reg_write(dev, PFUZE100_SW1CCONF, reg);
+-	}
+-
+-	return 0;
+-}
+-#endif
+-
+-#ifdef CONFIG_LDO_BYPASS_CHECK
+-#ifdef CONFIG_POWER
+-void ldo_mode_set(int ldo_bypass)
+-{
+-	unsigned int value;
+-	int is_400M;
+-	unsigned char vddarm;
+-	struct pmic *p = pmic_get("PFUZE100");
+-
+-	if (!p) {
+-		printf("No PMIC found!\n");
+-		return;
+-	}
+-
+-	/* increase VDDARM/VDDSOC to support 1.2G chip */
+-	if (check_1_2G()) {
+-		ldo_bypass = 0;	/* ldo_enable on 1.2G chip */
+-		printf("1.2G chip, increase VDDARM_IN/VDDSOC_IN\n");
+-		if (is_mx6dqp()) {
+-			/* increase VDDARM to 1.425V */
+-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
+-			value &= ~0x3f;
+-			value |= 0x29;
+-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
+-		} else {
+-			/* increase VDDARM to 1.425V */
+-			pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
+-			value &= ~0x3f;
+-			value |= 0x2d;
+-			pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
+-		}
+-		/* increase VDDSOC to 1.425V */
+-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
+-		value &= ~0x3f;
+-		value |= 0x2d;
+-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
+-	}
+-	/* switch to ldo_bypass mode , boot on 800Mhz */
+-	if (ldo_bypass) {
+-		prep_anatop_bypass();
+-		if (is_mx6dqp()) {
+-			/* decrease VDDARM for 400Mhz DQP:1.1V*/
+-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
+-			value &= ~0x3f;
+-			value |= 0x1c;
+-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
+-		} else {
+-			/* decrease VDDARM for 400Mhz DQ:1.1V, DL:1.275V */
+-			pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
+-			value &= ~0x3f;
+-			if (is_mx6dl())
+-				value |= 0x27;
+-			else
+-				value |= 0x20;
+-
+-			pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
+-		}
+-		/* increase VDDSOC to 1.3V */
+-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
+-		value &= ~0x3f;
+-		value |= 0x28;
+-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
+-
+-		/*
+-		 * MX6Q/DQP:
+-		 * VDDARM:1.15V@800M; VDDSOC:1.175V@800M
+-		 * VDDARM:0.975V@400M; VDDSOC:1.175V@400M
+-		 * MX6DL:
+-		 * VDDARM:1.175V@800M; VDDSOC:1.175V@800M
+-		 * VDDARM:1.075V@400M; VDDSOC:1.175V@400M
+-		 */
+-		is_400M = set_anatop_bypass(2);
+-		if (is_mx6dqp()) {
+-			pmic_reg_read(p, PFUZE100_SW2VOL, &value);
+-			value &= ~0x3f;
+-			if (is_400M)
+-				value |= 0x17;
+-			else
+-				value |= 0x1e;
+-			pmic_reg_write(p, PFUZE100_SW2VOL, value);
+-		}
+-
+-		if (is_400M) {
+-			if (is_mx6dl())
+-				vddarm = 0x1f;
+-			else
+-				vddarm = 0x1b;
+-		} else {
+-			if (is_mx6dl())
+-				vddarm = 0x23;
+-			else
+-				vddarm = 0x22;
+-		}
+-		pmic_reg_read(p, PFUZE100_SW1ABVOL, &value);
+-		value &= ~0x3f;
+-		value |= vddarm;
+-		pmic_reg_write(p, PFUZE100_SW1ABVOL, value);
+-
+-		/* decrease VDDSOC to 1.175V */
+-		pmic_reg_read(p, PFUZE100_SW1CVOL, &value);
+-		value &= ~0x3f;
+-		value |= 0x23;
+-		pmic_reg_write(p, PFUZE100_SW1CVOL, value);
+-
+-		finish_anatop_bypass();
+-		printf("switch to ldo_bypass mode!\n");
+-	}
+-}
+-#elif defined(CONFIG_DM_PMIC_PFUZE100)
+-void ldo_mode_set(int ldo_bypass)
+-{
+-	int is_400M;
+-	unsigned char vddarm;
+-	struct udevice *dev;
+-	int ret;
+-
+-	ret = pmic_get("pfuze100", &dev);
+-	if (ret == -ENODEV) {
+-		printf("No PMIC found!\n");
+-		return;
+-	}
+-
+-	/* increase VDDARM/VDDSOC to support 1.2G chip */
+-	if (check_1_2G()) {
+-		ldo_bypass = 0; /* ldo_enable on 1.2G chip */
+-		printf("1.2G chip, increase VDDARM_IN/VDDSOC_IN\n");
+-		if (is_mx6dqp()) {
+-			/* increase VDDARM to 1.425V */
+-			pmic_clrsetbits(dev, PFUZE100_SW2VOL, 0x3f, 0x29);
+-		} else {
+-			/* increase VDDARM to 1.425V */
+-			pmic_clrsetbits(dev, PFUZE100_SW1ABVOL, 0x3f, 0x2d);
+-		}
+-		/* increase VDDSOC to 1.425V */
+-		pmic_clrsetbits(dev, PFUZE100_SW1CVOL, 0x3f, 0x2d);
+-	}
+-	/* switch to ldo_bypass mode , boot on 800Mhz */
+-	if (ldo_bypass) {
+-		prep_anatop_bypass();
+-		if (is_mx6dqp()) {
+-			/* decrease VDDARM for 400Mhz DQP:1.1V*/
+-			pmic_clrsetbits(dev, PFUZE100_SW2VOL, 0x3f, 0x1c);
+-		} else {
+-			/* decrease VDDARM for 400Mhz DQ:1.1V, DL:1.275V */
+-			if (is_mx6dl())
+-				pmic_clrsetbits(dev, PFUZE100_SW1ABVOL, 0x3f, 0x27);
+-			else
+-				pmic_clrsetbits(dev, PFUZE100_SW1ABVOL, 0x3f, 0x20);
+-		}
+-		/* increase VDDSOC to 1.3V */
+-		pmic_clrsetbits(dev, PFUZE100_SW1CVOL, 0x3f, 0x28);
+-
+-		/*
+-		 * MX6Q/DQP:
+-		 * VDDARM:1.15V@800M; VDDSOC:1.175V@800M
+-		 * VDDARM:0.975V@400M; VDDSOC:1.175V@400M
+-		 * MX6DL:
+-		 * VDDARM:1.175V@800M; VDDSOC:1.175V@800M
+-		 * VDDARM:1.075V@400M; VDDSOC:1.175V@400M
+-		 */
+-		is_400M = set_anatop_bypass(2);
+-		if (is_mx6dqp()) {
+-			if (is_400M)
+-				pmic_clrsetbits(dev, PFUZE100_SW2VOL, 0x3f, 0x17);
+-			else
+-				pmic_clrsetbits(dev, PFUZE100_SW2VOL, 0x3f, 0x1e);
+-		}
+-
+-		if (is_400M) {
+-			if (is_mx6dl())
+-				vddarm = 0x1f;
+-			else
+-				vddarm = 0x1b;
+-		} else {
+-			if (is_mx6dl())
+-				vddarm = 0x23;
+-			else
+-				vddarm = 0x22;
+-		}
+-		pmic_clrsetbits(dev, PFUZE100_SW1ABVOL, 0x3f, vddarm);
+-
+-		/* decrease VDDSOC to 1.175V */
+-		pmic_clrsetbits(dev, PFUZE100_SW1CVOL, 0x3f, 0x23);
+-
+-		finish_anatop_bypass();
+-		printf("switch to ldo_bypass mode!\n");
+-	}
+-}
+-#endif
+-#endif
+-
+ #ifdef CONFIG_CMD_BMODE
+ static const struct boot_mode board_boot_modes[] = {
+ 	/* 4 bit bus width */
+diff --git a/configs/mx6qsabresd_defconfig b/configs/mx6qsabresd_defconfig
+index 8cb7ae2..5e809fd 100644
+--- a/configs/mx6qsabresd_defconfig
++++ b/configs/mx6qsabresd_defconfig
+@@ -1,60 +1,924 @@
++#
++# Automatically generated file; DO NOT EDIT.
++# U-Boot 2017.03 Configuration
++#
++CONFIG_CREATE_ARCH_SYMLINK=y
++# CONFIG_ARC is not set
+ CONFIG_ARM=y
++# CONFIG_AVR32 is not set
++# CONFIG_BLACKFIN is not set
++# CONFIG_M68K is not set
++# CONFIG_MICROBLAZE is not set
++# CONFIG_MIPS is not set
++# CONFIG_NDS32 is not set
++# CONFIG_NIOS2 is not set
++# CONFIG_OPENRISC is not set
++# CONFIG_PPC is not set
++# CONFIG_SANDBOX is not set
++# CONFIG_SH is not set
++# CONFIG_SPARC is not set
++# CONFIG_X86 is not set
++# CONFIG_XTENSA is not set
++CONFIG_SYS_ARCH="arm"
++CONFIG_SYS_CPU="armv7"
++CONFIG_SYS_SOC="mx6"
++CONFIG_SYS_VENDOR="freescale"
++CONFIG_SYS_BOARD="mx6sabresd"
++CONFIG_SYS_CONFIG_NAME="mx6sabresd"
++
++#
++# ARM architecture
++#
++CONFIG_HAS_VBAR=y
++CONFIG_HAS_THUMB2=y
++CONFIG_CPU_V7=y
++CONFIG_SYS_ARM_ARCH=7
++CONFIG_SYS_CACHE_SHIFT_6=y
++CONFIG_SYS_CACHELINE_SIZE=64
++# CONFIG_SEMIHOSTING is not set
++# CONFIG_SYS_L2CACHE_OFF is not set
++# CONFIG_ENABLE_ARM_SOC_BOOT0_HOOK is not set
++CONFIG_USE_ARCH_MEMCPY=y
++CONFIG_SPL_USE_ARCH_MEMCPY=y
++CONFIG_USE_ARCH_MEMSET=y
++CONFIG_SPL_USE_ARCH_MEMSET=y
++# CONFIG_ARM64_SUPPORT_AARCH32 is not set
++# CONFIG_ARCH_AT91 is not set
++# CONFIG_TARGET_EDB93XX is not set
++# CONFIG_TARGET_ASPENITE is not set
++# CONFIG_TARGET_GPLUGD is not set
++# CONFIG_ARCH_DAVINCI is not set
++# CONFIG_KIRKWOOD is not set
++# CONFIG_ARCH_MVEBU is not set
++# CONFIG_TARGET_DEVKIT3250 is not set
++# CONFIG_TARGET_WORK_92105 is not set
++# CONFIG_TARGET_MX25PDK is not set
++# CONFIG_TARGET_ZMX25 is not set
++# CONFIG_TARGET_APF27 is not set
++# CONFIG_TARGET_APX4DEVKIT is not set
++# CONFIG_TARGET_XFI3 is not set
++# CONFIG_TARGET_M28EVK is not set
++# CONFIG_TARGET_MX23EVK is not set
++# CONFIG_TARGET_MX28EVK is not set
++# CONFIG_TARGET_MX23_OLINUXINO is not set
++# CONFIG_TARGET_BG0900 is not set
++# CONFIG_TARGET_SANSA_FUZE_PLUS is not set
++# CONFIG_TARGET_SC_SPS_1 is not set
++# CONFIG_ORION5X is not set
++# CONFIG_TARGET_SPEAR300 is not set
++# CONFIG_TARGET_SPEAR310 is not set
++# CONFIG_TARGET_SPEAR320 is not set
++# CONFIG_TARGET_SPEAR600 is not set
++# CONFIG_TARGET_STV0991 is not set
++# CONFIG_TARGET_X600 is not set
++# CONFIG_TARGET_IMX31_PHYCORE is not set
++# CONFIG_TARGET_IMX31_PHYCORE_EET is not set
++# CONFIG_TARGET_MX31ADS is not set
++# CONFIG_TARGET_MX31PDK is not set
++# CONFIG_TARGET_WOODBURN is not set
++# CONFIG_TARGET_WOODBURN_SD is not set
++# CONFIG_TARGET_FLEA3 is not set
++# CONFIG_TARGET_MX35PDK is not set
++# CONFIG_ARCH_BCM283X is not set
++# CONFIG_TARGET_VEXPRESS_CA15_TC2 is not set
++# CONFIG_TARGET_VEXPRESS_CA5X2 is not set
++# CONFIG_TARGET_VEXPRESS_CA9X4 is not set
++# CONFIG_TARGET_BRXRE1 is not set
++# CONFIG_TARGET_BRPPT1 is not set
++# CONFIG_TARGET_DRACO is not set
++# CONFIG_TARGET_THUBAN is not set
++# CONFIG_TARGET_RASTABAN is not set
++# CONFIG_TARGET_ETAMIN is not set
++# CONFIG_TARGET_PXM2 is not set
++# CONFIG_TARGET_RUT is not set
++# CONFIG_TARGET_TI814X_EVM is not set
++# CONFIG_TARGET_TI816X_EVM is not set
++# CONFIG_TARGET_BCM23550_W1D is not set
++# CONFIG_TARGET_BCM28155_AP is not set
++# CONFIG_TARGET_BCMCYGNUS is not set
++# CONFIG_TARGET_BCMNSP is not set
++# CONFIG_ARCH_EXYNOS is not set
++# CONFIG_ARCH_S5PC1XX is not set
++# CONFIG_ARCH_HIGHBANK is not set
++# CONFIG_ARCH_INTEGRATOR is not set
++# CONFIG_ARCH_KEYSTONE is not set
++# CONFIG_ARCH_MESON is not set
++# CONFIG_ARCH_MX7ULP is not set
++# CONFIG_ARCH_MX7 is not set
+ CONFIG_ARCH_MX6=y
++# CONFIG_ARCH_MX5 is not set
++# CONFIG_TARGET_M53EVK is not set
++# CONFIG_TARGET_MX51EVK is not set
++# CONFIG_TARGET_MX53ARD is not set
++# CONFIG_TARGET_MX53EVK is not set
++# CONFIG_TARGET_MX53LOCO is not set
++# CONFIG_TARGET_MX53SMD is not set
++# CONFIG_OMAP34XX is not set
++# CONFIG_OMAP44XX is not set
++# CONFIG_OMAP54XX is not set
++# CONFIG_AM43XX is not set
++# CONFIG_AM33XX is not set
++# CONFIG_ARCH_RMOBILE is not set
++# CONFIG_TARGET_S32V234EVB is not set
++# CONFIG_ARCH_SNAPDRAGON is not set
++# CONFIG_ARCH_SOCFPGA is not set
++# CONFIG_TARGET_CM_T43 is not set
++# CONFIG_ARCH_SUNXI is not set
++# CONFIG_TARGET_TS4600 is not set
++# CONFIG_TARGET_TS4800 is not set
++# CONFIG_TARGET_VF610TWR is not set
++# CONFIG_TARGET_COLIBRI_VF is not set
++# CONFIG_TARGET_PCM052 is not set
++# CONFIG_TARGET_BK4R1 is not set
++# CONFIG_ARCH_ZYNQ is not set
++# CONFIG_ARCH_ZYNQMP is not set
++# CONFIG_TEGRA is not set
++# CONFIG_TARGET_VEXPRESS64_AEMV8A is not set
++# CONFIG_TARGET_VEXPRESS64_BASE_FVP is not set
++# CONFIG_TARGET_VEXPRESS64_BASE_FVP_DRAM is not set
++# CONFIG_TARGET_VEXPRESS64_JUNO is not set
++# CONFIG_TARGET_LS2080A_EMU is not set
++# CONFIG_TARGET_LS2080A_SIMU is not set
++# CONFIG_TARGET_LS2080AQDS is not set
++# CONFIG_TARGET_LS2080ARDB is not set
++# CONFIG_TARGET_HIKEY is not set
++# CONFIG_TARGET_LS1012AQDS is not set
++# CONFIG_TARGET_LS1012ARDB is not set
++# CONFIG_TARGET_LS1012AFRDM is not set
++# CONFIG_TARGET_LS1021AQDS is not set
++# CONFIG_TARGET_LS1021ATWR is not set
++# CONFIG_TARGET_LS1021AIOT is not set
++# CONFIG_TARGET_LS1043AQDS is not set
++# CONFIG_TARGET_LS1043ARDB is not set
++# CONFIG_TARGET_LS1046AQDS is not set
++# CONFIG_TARGET_LS1046ARDB is not set
++# CONFIG_TARGET_H2200 is not set
++# CONFIG_TARGET_ZIPITZ2 is not set
++# CONFIG_TARGET_COLIBRI_PXA270 is not set
++# CONFIG_ARCH_UNIPHIER is not set
++# CONFIG_STM32 is not set
++# CONFIG_ARCH_ROCKCHIP is not set
++# CONFIG_TARGET_THUNDERX_88XX is not set
++# CONFIG_ARCH_ASPEED is not set
++CONFIG_SYS_MALLOC_F_LEN=0x400
++# CONFIG_SECURE_BOOT is not set
++CONFIG_MX6=y
++# CONFIG_LDO_BYPASS_CHECK is not set
++# CONFIG_MODULE_FUSE is not set
++# CONFIG_TARGET_ADVANTECH_DMS_BA16 is not set
++# CONFIG_TARGET_APALIS_IMX6 is not set
++# CONFIG_TARGET_ARISTAINETOS is not set
++# CONFIG_TARGET_ARISTAINETOS2 is not set
++# CONFIG_TARGET_ARISTAINETOS2B is not set
++# CONFIG_TARGET_CGTQMX6EVAL is not set
++# CONFIG_TARGET_CM_FX6 is not set
++# CONFIG_TARGET_COLIBRI_IMX6 is not set
++# CONFIG_TARGET_EMBESTMX6BOARDS is not set
++# CONFIG_TARGET_GE_B450V3 is not set
++# CONFIG_TARGET_GE_B650V3 is not set
++# CONFIG_TARGET_GE_B850V3 is not set
++# CONFIG_TARGET_GW_VENTANA is not set
++# CONFIG_TARGET_KOSAGI_NOVENA is not set
++# CONFIG_TARGET_MCCMON6 is not set
++# CONFIG_TARGET_MX6CUBOXI is not set
++# CONFIG_TARGET_MX6QARM2 is not set
++# CONFIG_TARGET_MX6Q_ICORE is not set
++# CONFIG_TARGET_MX6Q_ICORE_RQS is not set
++# CONFIG_TARGET_MX6QSABREAUTO is not set
+ CONFIG_TARGET_MX6SABRESD=y
++# CONFIG_TARGET_MX6SLEVK is not set
++# CONFIG_TARGET_MX6SLLEVK is not set
++# CONFIG_TARGET_MX6SLL_ARM2 is not set
++# CONFIG_TARGET_MX6SXSABRESD is not set
++# CONFIG_TARGET_MX6SXSABREAUTO is not set
++# CONFIG_TARGET_MX6SX_14X14_ARM2 is not set
++# CONFIG_TARGET_MX6SX_17X17_ARM2 is not set
++# CONFIG_TARGET_MX6SX_19X19_ARM2 is not set
++# CONFIG_TARGET_MX6UL_9X9_EVK is not set
++# CONFIG_TARGET_MX6UL_14X14_EVK is not set
++# CONFIG_TARGET_MX6UL_NXPU_IOPB is not set
++# CONFIG_TARGET_MX6UL_14X14_DDR3_ARM2 is not set
++# CONFIG_TARGET_MX6UL_14X14_LPDDR2_ARM2 is not set
++# CONFIG_TARGET_MX6UL_GEAM is not set
++# CONFIG_TARGET_MX6ULL_DDR3_ARM2 is not set
++# CONFIG_TARGET_MX6ULL_14X14_EVK is not set
++# CONFIG_TARGET_MX6ULL_9X9_EVK is not set
++# CONFIG_TARGET_PICOSOM_IMX6UL is not set
++# CONFIG_TARGET_MX6UL_AQUILA is not set
++# CONFIG_TARGET_NITROGEN6X is not set
++# CONFIG_TARGET_OT1200 is not set
++# CONFIG_TARGET_PICO_IMX6UL is not set
++# CONFIG_TARGET_LITEBOARD is not set
++# CONFIG_TARGET_PLATINUM_PICON is not set
++# CONFIG_TARGET_PLATINUM_TITANIUM is not set
++# CONFIG_TARGET_PCM058 is not set
++# CONFIG_TARGET_SECOMX6 is not set
++# CONFIG_TARGET_TBS2910 is not set
++# CONFIG_TARGET_TITANIUM is not set
++# CONFIG_TARGET_TQMA6 is not set
++# CONFIG_TARGET_UDOO is not set
++# CONFIG_TARGET_UDOO_NEO is not set
++# CONFIG_TARGET_SAMTEC_VINING_2000 is not set
++# CONFIG_TARGET_WANDBOARD is not set
++# CONFIG_TARGET_WARP is not set
++# CONFIG_TARGET_XPRESS is not set
++# CONFIG_TARGET_ZC5202 is not set
++# CONFIG_TARGET_ZC5601 is not set
++# CONFIG_TARGET_MX6DQSCM is not set
++# CONFIG_TARGET_MX6SXSCM is not set
++# CONFIG_ARMV7_LPAE is not set
++# CONFIG_GPT_TIMER is not set
++# CONFIG_IMX_RDC is not set
++# CONFIG_IMX_BOOTAUX is not set
++# CONFIG_USE_IMXIMG_PLUGIN is not set
++# CONFIG_DBG_MONITOR is not set
++CONFIG_IDENT_STRING=""
++# CONFIG_PRE_CONSOLE_BUFFER is not set
+ CONFIG_VIDEO=y
+-CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6sabresd/mx6q_4x_mt41j128.cfg,MX6Q"
++
++#
++# ARM debug
++#
++# CONFIG_DEBUG_LL is not set
++CONFIG_DEFAULT_DEVICE_TREE="imx6q-sabresd"
++CONFIG_SMBIOS_PRODUCT_NAME="mx6sabresd"
++# CONFIG_AHCI is not set
++
++#
++# General setup
++#
++CONFIG_LOCALVERSION=""
++CONFIG_LOCALVERSION_AUTO=y
++CONFIG_CC_OPTIMIZE_FOR_SIZE=y
++# CONFIG_DISTRO_DEFAULTS is not set
++CONFIG_SYS_MALLOC_F=y
++CONFIG_EXPERT=y
++CONFIG_SYS_MALLOC_CLEAR_ON_INIT=y
++# CONFIG_TOOLS_DEBUG is not set
++# CONFIG_PHYS_64BIT is not set
++
++#
++# Boot images
++#
++# CONFIG_FIT is not set
++# CONFIG_OF_BOARD_SETUP is not set
++# CONFIG_OF_SYSTEM_SETUP is not set
++# CONFIG_OF_STDOUT_VIA_ALIAS is not set
++CONFIG_SYS_EXTRA_OPTIONS="IMX_CONFIG=board/freescale/mx6sabresd/mx6q_tater.cfg,MX6Q"
++CONFIG_ARCH_FIXUP_FDT_MEMORY=y
++
++#
++# API
++#
++# CONFIG_API is not set
++
++#
++# Boot timing
++#
++# CONFIG_BOOTSTAGE is not set
++CONFIG_BOOTSTAGE_USER_COUNT=20
++CONFIG_BOOTSTAGE_STASH_ADDR=0
++CONFIG_BOOTSTAGE_STASH_SIZE=4096
++
++#
++# Boot media
++#
++# CONFIG_NAND_BOOT is not set
++# CONFIG_ONENAND_BOOT is not set
++# CONFIG_QSPI_BOOT is not set
++# CONFIG_SATA_BOOT is not set
++# CONFIG_SD_BOOT is not set
++# CONFIG_SPI_BOOT is not set
+ CONFIG_BOOTDELAY=3
++
++#
++# Console
++#
++# CONFIG_CONSOLE_RECORD is not set
++# CONFIG_SILENT_CONSOLE is not set
+ # CONFIG_CONSOLE_MUX is not set
+ CONFIG_SYS_CONSOLE_IS_IN_ENV=y
+ CONFIG_SYS_CONSOLE_OVERWRITE_ROUTINE=y
++# CONFIG_SYS_CONSOLE_ENV_OVERWRITE is not set
++# CONFIG_SYS_CONSOLE_INFO_QUIET is not set
++# CONFIG_SYS_STDIO_DEREGISTER is not set
++CONFIG_DEFAULT_FDT_FILE=""
++# CONFIG_VERSION_VARIABLE is not set
++CONFIG_BOARD_LATE_INIT=y
++CONFIG_DISPLAY_CPUINFO=y
++CONFIG_DISPLAY_BOARDINFO=y
++
++#
++# Start-up hooks
++#
++# CONFIG_ARCH_EARLY_INIT_R is not set
++# CONFIG_ARCH_MISC_INIT is not set
++CONFIG_BOARD_EARLY_INIT_F=y
++
++#
++# SPL / TPL
++#
++CONFIG_SUPPORT_SPL=y
++# CONFIG_SPL is not set
++
++#
++# Command line interface
++#
++CONFIG_CMDLINE=y
+ CONFIG_HUSH_PARSER=y
++CONFIG_SYS_PROMPT="=> "
++
++#
++# Autoboot options
++#
++CONFIG_AUTOBOOT=y
++# CONFIG_AUTOBOOT_KEYED is not set
++
++#
++# FASTBOOT
++#
++# CONFIG_FASTBOOT is not set
++
++#
++# Commands
++#
++
++#
++# Info commands
++#
++CONFIG_CMD_BDI=y
++# CONFIG_CMD_CONFIG is not set
++CONFIG_CMD_CONSOLE=y
++# CONFIG_CMD_CPU is not set
++# CONFIG_CMD_LICENSE is not set
++
++#
++# Boot commands
++#
++CONFIG_CMD_BOOTD=y
++CONFIG_CMD_BOOTM=y
+ CONFIG_CMD_BOOTZ=y
++CONFIG_CMD_BOOTEFI=y
++CONFIG_CMD_BOOTEFI_HELLO_COMPILE=y
++# CONFIG_CMD_BOOTEFI_HELLO is not set
++# CONFIG_CMD_BOOTMENU is not set
++CONFIG_CMD_ELF=y
++CONFIG_CMD_FDT=y
++CONFIG_CMD_GO=y
++CONFIG_CMD_RUN=y
++CONFIG_CMD_IMI=y
+ # CONFIG_CMD_IMLS is not set
+-# CONFIG_CMD_FLASH is not set
++CONFIG_CMD_XIMG=y
++
++#
++# Environment commands
++#
++# CONFIG_CMD_ASKENV is not set
++CONFIG_CMD_EXPORTENV=y
++CONFIG_CMD_IMPORTENV=y
++CONFIG_CMD_EDITENV=y
++# CONFIG_CMD_GREPENV is not set
++CONFIG_CMD_SAVEENV=y
++CONFIG_CMD_ENV_EXISTS=y
++
++#
++# Memory commands
++#
++CONFIG_CMD_MEMORY=y
++CONFIG_CMD_CRC32=y
++# CONFIG_LOOPW is not set
+ CONFIG_CMD_MEMTEST=y
++# CONFIG_CMD_MX_CYCLIC is not set
++# CONFIG_CMD_MEMINFO is not set
++# CONFIG_CMD_UNZIP is not set
++# CONFIG_CMD_ZIP is not set
++
++#
++# Device access commands
++#
++CONFIG_CMD_DM=y
++# CONFIG_CMD_DEMO is not set
++CONFIG_CMD_LOADB=y
++CONFIG_CMD_LOADS=y
++# CONFIG_CMD_FLASH is not set
++# CONFIG_CMD_GPT is not set
++# CONFIG_CMD_ARMFLASH is not set
+ CONFIG_CMD_MMC=y
++# CONFIG_CMD_NAND is not set
++# CONFIG_CMD_PART is not set
+ CONFIG_CMD_SF=y
++# CONFIG_CMD_SPI is not set
+ CONFIG_CMD_I2C=y
+ CONFIG_CMD_USB=y
+ CONFIG_CMD_DFU=y
+ CONFIG_CMD_USB_MASS_STORAGE=y
++CONFIG_CMD_FPGA=y
+ CONFIG_CMD_GPIO=y
++
++#
++# Shell scripting commands
++#
++CONFIG_CMD_ECHO=y
++CONFIG_CMD_ITEST=y
++CONFIG_CMD_SOURCE=y
++CONFIG_CMD_SETEXPR=y
++
++#
++# Network commands
++#
++CONFIG_CMD_NET=y
++# CONFIG_CMD_TFTPPUT is not set
++# CONFIG_CMD_TFTPSRV is not set
++# CONFIG_CMD_RARP is not set
+ CONFIG_CMD_DHCP=y
++# CONFIG_CMD_PXE is not set
++CONFIG_CMD_NFS=y
+ CONFIG_CMD_MII=y
+ CONFIG_CMD_PING=y
++# CONFIG_CMD_CDP is not set
++# CONFIG_CMD_SNTP is not set
++# CONFIG_CMD_DNS is not set
++# CONFIG_CMD_LINK_LOCAL is not set
++
++#
++# Misc commands
++#
++# CONFIG_CMD_BKOPS_ENABLE is not set
+ CONFIG_CMD_CACHE=y
++# CONFIG_CMD_TIME is not set
++CONFIG_CMD_MISC=y
++# CONFIG_CMD_TIMER is not set
++# CONFIG_CMD_QFW is not set
++
++#
++# Power commands
++#
++# CONFIG_CMD_PMIC is not set
++# CONFIG_CMD_REGULATOR is not set
++
++#
++# Security commands
++#
++
++#
++# Firmware commands
++#
++
++#
++# Filesystem commands
++#
+ CONFIG_CMD_EXT2=y
+ CONFIG_CMD_EXT4=y
+ CONFIG_CMD_EXT4_WRITE=y
+ CONFIG_CMD_FAT=y
+ CONFIG_CMD_FS_GENERIC=y
+-CONFIG_DFU_MMC=y
+-CONFIG_DFU_SF=y
+-CONFIG_USB=y
+-CONFIG_USB_STORAGE=y
+-CONFIG_USB_GADGET=y
+-CONFIG_CI_UDC=y
+-CONFIG_USB_GADGET_DOWNLOAD=y
+-CONFIG_G_DNL_MANUFACTURER="FSL"
+-CONFIG_G_DNL_VENDOR_NUM=0x0525
+-CONFIG_G_DNL_PRODUCT_NUM=0xa4a5
+-# CONFIG_VIDEO_SW_CURSOR is not set
+-# CONFIG_OF_LIBFDT=y
++# CONFIG_CMD_UBI is not set
+ 
+-CONFIG_DEFAULT_DEVICE_TREE="imx6q-sabresd"
++#
++# Partition Types
++#
++CONFIG_PARTITIONS=y
++# CONFIG_MAC_PARTITION is not set
++CONFIG_DOS_PARTITION=y
++# CONFIG_ISO_PARTITION is not set
++# CONFIG_AMIGA_PARTITION is not set
++# CONFIG_EFI_PARTITION is not set
++# CONFIG_PARTITION_UUIDS is not set
++CONFIG_SUPPORT_OF_CONTROL=y
++
++#
++# Device Tree Control
++#
+ CONFIG_OF_CONTROL=y
++CONFIG_OF_SEPARATE=y
++# CONFIG_OF_EMBED is not set
++CONFIG_NET=y
++# CONFIG_NET_RANDOM_ETHADDR is not set
++# CONFIG_NETCONSOLE is not set
++CONFIG_NET_TFTP_VARS=y
++CONFIG_BOOTP_PXE_CLIENTARCH=0x15
++CONFIG_BOOTP_VCI_STRING="U-Boot.armv7"
++
++#
++# Device Drivers
++#
++
++#
++# Generic Driver Options
++#
++CONFIG_DM=y
++CONFIG_DM_WARN=y
++CONFIG_DM_DEVICE_REMOVE=y
++CONFIG_DM_STDIO=y
++CONFIG_DM_SEQ_ALIAS=y
++# CONFIG_SPL_DM_SEQ_ALIAS is not set
++# CONFIG_REGMAP is not set
++# CONFIG_SPL_REGMAP is not set
++CONFIG_DEVRES=y
++# CONFIG_DEBUG_DEVRES is not set
++CONFIG_SIMPLE_BUS=y
++CONFIG_OF_TRANSLATE=y
++# CONFIG_ADC is not set
++# CONFIG_ADC_EXYNOS is not set
++# CONFIG_ADC_SANDBOX is not set
+ # CONFIG_BLK is not set
++# CONFIG_BLOCK_CACHE is not set
++
++#
++# SATA/SCSI device support
++#
++
++#
++# Clock
++#
++# CONFIG_CLK is not set
++# CONFIG_CPU is not set
++
++#
++# Hardware crypto devices
++#
++# CONFIG_FSL_CAAM is not set
++CONFIG_SYS_FSL_SEC_COMPAT_4=y
++# CONFIG_SYS_FSL_SEC_BE is not set
++CONFIG_SYS_FSL_SEC_LE=y
++
++#
++# Demo for driver model
++#
++# CONFIG_DM_DEMO is not set
++
++#
++# DFU support
++#
++CONFIG_USB_FUNCTION_DFU=y
++# CONFIG_DFU_TFTP is not set
++CONFIG_DFU_MMC=y
++# CONFIG_DFU_NAND is not set
++# CONFIG_DFU_RAM is not set
++CONFIG_DFU_SF=y
++
++#
++# DMA Support
++#
++# CONFIG_DMA is not set
++# CONFIG_TI_EDMA3 is not set
++
++#
++# FPGA support
++#
++# CONFIG_FPGA_ALTERA is not set
++# CONFIG_FPGA_XILINX is not set
++
++#
++# GPIO Support
++#
+ CONFIG_DM_GPIO=y
++# CONFIG_ALTERA_PIO is not set
++# CONFIG_DWAPB_GPIO is not set
++# CONFIG_ATMEL_PIO4 is not set
++# CONFIG_INTEL_BROADWELL_GPIO is not set
++# CONFIG_IMX_RGPIO2P is not set
++# CONFIG_LPC32XX_GPIO is not set
++# CONFIG_MSM_GPIO is not set
++# CONFIG_PCF8575_GPIO is not set
++# CONFIG_ROCKCHIP_GPIO is not set
++# CONFIG_TEGRA_GPIO is not set
++# CONFIG_TEGRA186_GPIO is not set
++# CONFIG_VYBRID_GPIO is not set
++# CONFIG_DM_74X164 is not set
++# CONFIG_DM_PCA953X is not set
++# CONFIG_MPC85XX_GPIO is not set
++
++#
++# I2C support
++#
+ CONFIG_DM_I2C=y
+-CONFIG_DM_MMC=y
+-# CONFIG_DM_MMC_OPS is not set
++# CONFIG_DM_I2C_COMPAT is not set
++# CONFIG_DM_I2C_GPIO is not set
++# CONFIG_SYS_I2C_FSL is not set
++# CONFIG_SYS_I2C_DW is not set
++# CONFIG_SYS_I2C_INTEL is not set
++# CONFIG_SYS_I2C_MXC is not set
++# CONFIG_SYS_I2C_ROCKCHIP is not set
++# CONFIG_SYS_I2C_MVTWSI is not set
++# CONFIG_I2C_MUX is not set
++# CONFIG_DM_KEYBOARD is not set
++# CONFIG_CROS_EC_KEYB is not set
++
++#
++# LED Support
++#
++# CONFIG_LED is not set
++# CONFIG_LED_STATUS is not set
++
++#
++# Mailbox Controller Support
++#
++# CONFIG_DM_MAILBOX is not set
++
++#
++# Memory Controller drivers
++#
++
++#
++# Multifunction device drivers
++#
++# CONFIG_MISC is not set
++# CONFIG_CROS_EC is not set
++# CONFIG_FSL_SEC_MON is not set
++# CONFIG_MXC_OCOTP is not set
++# CONFIG_NUVOTON_NCT6102D is not set
++# CONFIG_PWRSEQ is not set
++# CONFIG_PCA9551_LED is not set
++# CONFIG_WINBOND_W83627 is not set
++
++#
++# MMC Host controller Support
++#
++CONFIG_MMC=y
++CONFIG_GENERIC_MMC=y
++# CONFIG_DM_MMC is not set
++# CONFIG_SPL_MMC_TINY is not set
++# CONFIG_MMC_DW is not set
++# CONFIG_MMC_MXC is not set
++# CONFIG_MMC_MXS is not set
++# CONFIG_MMC_OMAP_HS is not set
++# CONFIG_MMC_SDHCI is not set
++
++#
++# MTD Support
++#
++# CONFIG_MTD is not set
++# CONFIG_MTD_NOR_FLASH is not set
++
++#
++# NAND Device Support
++#
++# CONFIG_NAND_DENALI is not set
++# CONFIG_NAND_VF610_NFC is not set
++# CONFIG_NAND_PXA3XX is not set
++# CONFIG_NAND_ARASAN is not set
++# CONFIG_NAND_MXS is not set
++# CONFIG_NAND_ZYNQ is not set
++
++#
++# Generic NAND options
++#
++
++#
++# SPI Flash Support
++#
++# CONFIG_SPI_FLASH is not set
++
++#
++# UBI support
++#
++# CONFIG_MTD_UBI is not set
++# CONFIG_BITBANGMII is not set
++# CONFIG_MV88E6352_SWITCH is not set
++# CONFIG_PHYLIB is not set
++CONFIG_DM_ETH=y
++CONFIG_NETDEVICES=y
++# CONFIG_ALTERA_TSE is not set
++# CONFIG_DWC_ETH_QOS is not set
++# CONFIG_E1000 is not set
++# CONFIG_ETH_DESIGNWARE is not set
++# CONFIG_ETHOC is not set
++# CONFIG_FEC_MXC is not set
++# CONFIG_MACB is not set
++# CONFIG_RTL8139 is not set
++# CONFIG_RTL8169 is not set
++# CONFIG_SUN8I_EMAC is not set
++# CONFIG_PCI is not set
++# CONFIG_MVEBU_COMPHY_SUPPORT is not set
++
++#
++# Pin controllers
++#
+ CONFIG_PINCTRL=y
++CONFIG_PINCTRL_FULL=y
++CONFIG_PINCTRL_GENERIC=y
++CONFIG_PINMUX=y
++# CONFIG_PINCONF is not set
++# CONFIG_ROCKCHIP_RK3036_PINCTRL is not set
++# CONFIG_ROCKCHIP_RK3288_PINCTRL is not set
++# CONFIG_PINCTRL_AT91PIO4 is not set
++# CONFIG_ROCKCHIP_RK3399_PINCTRL is not set
++CONFIG_PINCTRL_IMX=y
+ CONFIG_PINCTRL_IMX6=y
++
++#
++# Power
++#
++
++#
++# Power Domain Support
++#
++# CONFIG_POWER_DOMAIN is not set
+ CONFIG_DM_PMIC=y
++CONFIG_PMIC_CHILDREN=y
++CONFIG_SPL_PMIC_CHILDREN=y
++# CONFIG_PMIC_ACT8846 is not set
+ CONFIG_DM_PMIC_PFUZE100=y
++# CONFIG_DM_PMIC_MAX77686 is not set
++# CONFIG_DM_PMIC_MAX8998 is not set
++# CONFIG_PMIC_MAX8997 is not set
++# CONFIG_PMIC_PM8916 is not set
++# CONFIG_PMIC_RK808 is not set
++# CONFIG_PMIC_S2MPS11 is not set
++# CONFIG_DM_PMIC_SANDBOX is not set
++# CONFIG_PMIC_S5M8767 is not set
++# CONFIG_PMIC_RN5T567 is not set
++# CONFIG_PMIC_TPS65090 is not set
++# CONFIG_PMIC_PALMAS is not set
++# CONFIG_PMIC_LP873X is not set
++# CONFIG_POWER_MC34VR500 is not set
+ CONFIG_DM_REGULATOR=y
++# CONFIG_SPL_DM_REGULATOR is not set
+ CONFIG_DM_REGULATOR_PFUZE100=y
++# CONFIG_REGULATOR_PWM is not set
+ CONFIG_DM_REGULATOR_FIXED=y
+ CONFIG_DM_REGULATOR_GPIO=y
+-CONFIG_DM_ETH=y
++# CONFIG_DM_PWM is not set
++# CONFIG_RAM is not set
++
++#
++# Remote Processor drivers
++#
++
++#
++# Reset Controller Support
++#
++# CONFIG_DM_RESET is not set
++
++#
++# Real Time Clock
++#
++# CONFIG_DM_RTC is not set
++
++#
++# Serial drivers
++#
++# CONFIG_DM_SERIAL is not set
++# CONFIG_DEBUG_UART is not set
++# CONFIG_DEBUG_UART_SKIP_INIT is not set
++# CONFIG_ATMEL_USART is not set
++# CONFIG_FSL_LPUART is not set
++# CONFIG_MVEBU_A3700_UART is not set
++# CONFIG_MXC_UART is not set
++# CONFIG_SYS_NS16550 is not set
++# CONFIG_PXA_SERIAL is not set
++
++#
++# Sound support
++#
++# CONFIG_SOUND is not set
++
++#
++# SPI Support
++#
++# CONFIG_DM_SPI is not set
++# CONFIG_SOFT_SPI is not set
++# CONFIG_FSL_ESPI is not set
++# CONFIG_FSL_QSPI is not set
++# CONFIG_TI_QSPI is not set
++
++#
++# SPMI support
++#
++# CONFIG_SPMI is not set
++
++#
++# System reset device drivers
++#
++# CONFIG_SYSRESET is not set
++CONFIG_DM_THERMAL=y
++# CONFIG_IMX_THERMAL is not set
++
++#
++# Timer Support
++#
++# CONFIG_TIMER is not set
++
++#
++# TPM support
++#
++CONFIG_USB=y
+ CONFIG_DM_USB=y
++
++#
++# USB Host Controller Drivers
++#
++# CONFIG_USB_XHCI_HCD is not set
++# CONFIG_USB_EHCI_HCD is not set
++# CONFIG_USB_EHCI is not set
++# CONFIG_USB_OHCI_HCD is not set
++# CONFIG_USB_UHCI_HCD is not set
++# CONFIG_USB_DWC3 is not set
++
++#
++# MUSB Controller Driver
++#
++# CONFIG_USB_MUSB_HOST is not set
++# CONFIG_USB_MUSB_GADGET is not set
++# CONFIG_USB_MUSB_TI is not set
++
++#
++# ULPI drivers
++#
++
++#
++# USB peripherals
++#
++CONFIG_USB_STORAGE=y
++# CONFIG_USB_KEYBOARD is not set
++CONFIG_USB_GADGET=y
++# CONFIG_USB_GADGET_ATMEL_USBA is not set
++# CONFIG_USB_GADGET_BCM_UDC_OTG_PHY is not set
++# CONFIG_USB_GADGET_DWC2_OTG is not set
++CONFIG_CI_UDC=y
++CONFIG_USB_GADGET_VBUS_DRAW=2
++CONFIG_USB_GADGET_DUALSPEED=y
++CONFIG_USB_GADGET_DOWNLOAD=y
++CONFIG_G_DNL_MANUFACTURER="FSL"
++CONFIG_G_DNL_VENDOR_NUM=0x0525
++CONFIG_G_DNL_PRODUCT_NUM=0xa4a5
++CONFIG_USBNET_DEVADDR="de:ad:be:ef:00:01"
++
++#
++# Graphics support
++#
++# CONFIG_DM_VIDEO is not set
++
++#
++# TrueType Fonts
++#
++# CONFIG_VIDEO_VESA is not set
++# CONFIG_VIDEO_LCD_ANX9804 is not set
++# CONFIG_VIDEO_LCD_SSD2828 is not set
++# CONFIG_VIDEO_LCD_HITACHI_TX18D42VM is not set
++# CONFIG_VIDEO_MVEBU is not set
++# CONFIG_I2C_EDID is not set
++# CONFIG_DISPLAY is not set
++# CONFIG_VIDEO_TEGRA20 is not set
++# CONFIG_VIDEO_BRIDGE is not set
++# CONFIG_VIDEO_IPUV3 is not set
++CONFIG_CFB_CONSOLE=y
++# CONFIG_CFB_CONSOLE_ANSI is not set
++CONFIG_VGA_AS_SINGLE_DEVICE=y
++# CONFIG_VIDEO_SW_CURSOR is not set
++# CONFIG_CONSOLE_EXTRA_INFO is not set
++CONFIG_CONSOLE_SCROLL_LINES=1
++# CONFIG_VIDEO_CT69000 is not set
++CONFIG_SYS_CONSOLE_BG_COL=0x00
++CONFIG_SYS_CONSOLE_FG_COL=0xa0
++# CONFIG_LCD is not set
++
++#
++# WATCHDOG support
++#
++# CONFIG_ULP_WATCHDOG is not set
++# CONFIG_PHYS_TO_BUS is not set
++
++#
++# File systems
++#
++
++#
++# Library routines
++#
++# CONFIG_CC_OPTIMIZE_LIBS_FOR_SPEED is not set
++CONFIG_HAVE_PRIVATE_LIBGCC=y
++CONFIG_USE_PRIVATE_LIBGCC=y
++CONFIG_SYS_HZ=1000
++# CONFIG_USE_TINY_PRINTF is not set
++CONFIG_REGEX=y
++# CONFIG_LIB_RAND is not set
++# CONFIG_CMD_DHRYSTONE is not set
++# CONFIG_RSA is not set
++# CONFIG_TPM is not set
++
++#
++# Hashing Support
++#
++# CONFIG_SHA1 is not set
++# CONFIG_SHA256 is not set
++# CONFIG_SHA_HW_ACCEL is not set
++
++#
++# Compression Support
++#
++# CONFIG_LZ4 is not set
++# CONFIG_ERRNO_STR is not set
++CONFIG_OF_LIBFDT=y
++# CONFIG_OF_LIBFDT_OVERLAY is not set
++# CONFIG_SPL_OF_LIBFDT is not set
++# CONFIG_FDT_FIXUP_PARTITIONS is not set
++
++#
++# System tables
++#
++CONFIG_GENERATE_SMBIOS_TABLE=y
++CONFIG_SMBIOS_MANUFACTURER="freescale"
++CONFIG_EFI_LOADER=y
++# CONFIG_UNIT_TEST is not set
