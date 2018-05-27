@@ -1,0 +1,1 @@
+sources/meta-fsl-bsp-release/imx/tools/fsl-setup-release.sh
