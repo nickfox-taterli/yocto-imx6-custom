@@ -1,4 +1,4 @@
-build-xwayland
+build-*
 downloads
 build.sh
 
