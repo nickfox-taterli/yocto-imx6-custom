@@ -16,6 +16,7 @@ LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
 SRC_URI += "file://0001-Fixed-SD-UART-E9.patch"
+SRC_URI += "file://0002-Remove-LVDS-Support.patch"
 
 SRCREV = "c27010d99a3d91703ea2d1a3f9630a9dedc3f86f"
 
