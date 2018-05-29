@@ -1,0 +1,26 @@
+diff --git a/drivers/input/touchscreen/edt-ft5x06.c b/drivers/input/touchscreen/edt-ft5x06.c
+index 28466e3..e80c1b6 100644
+--- a/drivers/input/touchscreen/edt-ft5x06.c
++++ b/drivers/input/touchscreen/edt-ft5x06.c
+@@ -69,6 +69,9 @@
+ #define EDT_RAW_DATA_RETRIES		100
+ #define EDT_RAW_DATA_DELAY		1 /* msec */
+ 
++#define MAX_SCREEN_X 800
++#define MAX_SCREEN_Y 480
++
+ enum edt_ver {
+ 	M06,
+ 	M09,
+@@ -969,9 +972,9 @@ static int edt_ft5x06_ts_probe(struct i2c_client *client,
+ 	input->dev.parent = &client->dev;
+ 
+ 	input_set_abs_params(input, ABS_MT_POSITION_X,
+-			     0, tsdata->num_x * 64 - 1, 0, 0);
++			     0, MAX_SCREEN_X, 0, 0);
+ 	input_set_abs_params(input, ABS_MT_POSITION_Y,
+-			     0, tsdata->num_y * 64 - 1, 0, 0);
++			     0, MAX_SCREEN_Y, 0, 0);
+ 
+ 	touchscreen_parse_properties(input, true, &tsdata->prop);
+ 

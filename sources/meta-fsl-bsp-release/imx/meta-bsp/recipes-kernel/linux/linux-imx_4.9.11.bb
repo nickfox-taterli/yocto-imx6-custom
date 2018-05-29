@@ -15,8 +15,11 @@ SRCBRANCH = "imx_4.9.11_1.0.0_ga"
 LOCALVERSION = "-1.0.0"
 KERNEL_SRC ?= "git://source.codeaurora.org/external/imx/linux-imx.git;protocol=https"
 SRC_URI = "${KERNEL_SRC};branch=${SRCBRANCH}"
+
 SRC_URI += "file://0001-Fixed-SD-UART-E9.patch"
 SRC_URI += "file://0002-Remove-LVDS-Support.patch"
+SRC_URI += "file://0003-FIX-EDT-FT5X06.patch"
+SRC_URI += "file://0004-Add-MyBoard-Config.patch"
 
 SRCREV = "c27010d99a3d91703ea2d1a3f9630a9dedc3f86f"
 
@@ -32,8 +35,8 @@ do_copy_defconfig () {
     if [ ${DO_CONFIG_V7_COPY} = "yes" ]; then
         # copy latest imx_v7_defconfig to use for mx6, mx6ul and mx7
         mkdir -p ${B}
-        cp ${S}/arch/arm/configs/imx_v7_defconfig ${B}/.config
-        cp ${S}/arch/arm/configs/imx_v7_defconfig ${B}/../defconfig
+        cp ${S}/arch/arm/configs/imx6q_custom_defconfig ${B}/.config
+        cp ${S}/arch/arm/configs/imx6q_custom_defconfig ${B}/../defconfig
     fi
 }
 
