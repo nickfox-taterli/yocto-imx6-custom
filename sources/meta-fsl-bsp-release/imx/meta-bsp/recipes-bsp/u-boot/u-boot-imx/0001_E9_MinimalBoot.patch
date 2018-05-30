@@ -172,7 +172,7 @@ index e69de29..ba68d37 100644
 +DATA 4 0x020c4060 0x000000fb
 +#endif
 diff --git a/board/freescale/mx6sabresd/mx6sabresd.c b/board/freescale/mx6sabresd/mx6sabresd.c
-index 9f60943..ce1d2b0 100644
+index 9f60943..8a4ff14 100644
 --- a/board/freescale/mx6sabresd/mx6sabresd.c
 +++ b/board/freescale/mx6sabresd/mx6sabresd.c
 @@ -87,8 +87,8 @@ int dram_init(void)
@@ -285,7 +285,19 @@ index 9f60943..ce1d2b0 100644
  		.vsync_len      = 10,
  		.sync           = 0,
  		.vmode          = FB_VMODE_NONINTERLACED
-@@ -959,370 +912,6 @@ int board_init(void)
+@@ -907,6 +860,11 @@ int board_ehci_power(int port, int on)
+ 
+ int board_early_init_f(void)
+ {
++        imx_iomux_v3_setup_pad(MX6_PAD_EIM_BCLK__GPIO6_IO31 | MUX_PAD_CTRL(UART_PAD_CTRL));
++        gpio_request(IMX_GPIO_NR(6, 31), "Power On MOS");
++        gpio_direction_output(IMX_GPIO_NR(6, 31) , 0);
++        gpio_set_value(IMX_GPIO_NR(6, 31), 1);
++
+ 	setup_iomux_uart();
+ #if defined(CONFIG_VIDEO_IPUV3)
+ 	setup_display();
+@@ -959,370 +917,6 @@ int board_init(void)
  	return 0;
  }
  
@@ -656,7 +668,7 @@ index 9f60943..ce1d2b0 100644
  #ifdef CONFIG_CMD_BMODE
  static const struct boot_mode board_boot_modes[] = {
  	/* 4 bit bus width */
-@@ -1342,7 +931,7 @@ int board_late_init(void)
+@@ -1342,7 +936,7 @@ int board_late_init(void)
  
  #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
  	setenv("board_name", "SABRESD");
