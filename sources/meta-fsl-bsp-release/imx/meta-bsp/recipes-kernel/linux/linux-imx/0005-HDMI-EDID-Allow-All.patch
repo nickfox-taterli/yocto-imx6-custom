@@ -1,0 +1,24 @@
+diff --git a/drivers/video/fbdev/mxc/mxc_hdmi.c b/drivers/video/fbdev/mxc/mxc_hdmi.c
+index ebec8d2..21425f7 100644
+--- a/drivers/video/fbdev/mxc/mxc_hdmi.c
++++ b/drivers/video/fbdev/mxc/mxc_hdmi.c
+@@ -1791,7 +1791,8 @@ static void mxc_hdmi_edid_rebuild_modelist(struct mxc_hdmi *hdmi)
+ 	console_lock();
+ 
+ 	fb_destroy_modelist(&hdmi->fbi->modelist);
+-	fb_add_videomode(&vga_mode, &hdmi->fbi->modelist);
++
++	if(hdmi->fbi->monspecs.modedb_len == 0) fb_add_videomode(&vga_mode, &hdmi->fbi->modelist);
+ 
+ 	for (i = 0; i < hdmi->fbi->monspecs.modedb_len; i++) {
+ 		/*
+@@ -1801,8 +1802,7 @@ static void mxc_hdmi_edid_rebuild_modelist(struct mxc_hdmi *hdmi)
+ 		 */
+ 		mode = &hdmi->fbi->monspecs.modedb[i];
+ 
+-		if (!(mode->vmode & FB_VMODE_INTERLACED) &&
+-				(mxc_edid_mode_to_vic(mode) != 0)) {
++		if (!(mode->vmode & FB_VMODE_INTERLACED)) {
+ 
+ 			dev_dbg(&hdmi->pdev->dev, "Added mode %d:", i);
+ 			dev_dbg(&hdmi->pdev->dev,

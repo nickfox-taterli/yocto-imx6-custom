@@ -20,6 +20,7 @@ SRC_URI += "file://0001-Fixed-SD-UART-E9.patch"
 SRC_URI += "file://0002-Remove-LVDS-Support.patch"
 SRC_URI += "file://0003-FIX-EDT-FT5X06.patch"
 SRC_URI += "file://0004-Add-MyBoard-Config.patch"
+SRC_URI += "file://0005-HDMI-EDID-Allow-All.patch"
 
 SRCREV = "c27010d99a3d91703ea2d1a3f9630a9dedc3f86f"
 
