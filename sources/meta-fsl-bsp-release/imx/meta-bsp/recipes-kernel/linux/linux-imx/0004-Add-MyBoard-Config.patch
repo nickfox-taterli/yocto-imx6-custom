@@ -1,8 +1,8 @@
 diff --git a/arch/arm/configs/imx6q_custom_defconfig b/arch/arm/configs/imx6q_custom_defconfig
-index e69de29..4eee4c0 100644
+index e69de29..6ce22a6 100644
 --- a/arch/arm/configs/imx6q_custom_defconfig
 +++ b/arch/arm/configs/imx6q_custom_defconfig
-@@ -0,0 +1,4797 @@
+@@ -0,0 +1,4804 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
 +# Linux/arm 4.9.11 Kernel Configuration
@@ -4313,7 +4313,14 @@ index e69de29..4eee4c0 100644
 +CONFIG_ROOT_NFS=y
 +# CONFIG_NFS_USE_LEGACY_DNS is not set
 +CONFIG_NFS_USE_KERNEL_DNS=y
-+# CONFIG_NFSD is not set
++CONFIG_NFSD=m
++CONFIG_NFSD_V3=y
++# CONFIG_NFSD_V3_ACL is not set
++CONFIG_NFSD_V4=y
++# CONFIG_NFSD_BLOCKLAYOUT is not set
++# CONFIG_NFSD_SCSILAYOUT is not set
++# CONFIG_NFSD_FLEXFILELAYOUT is not set
++# CONFIG_NFSD_FAULT_INJECTION is not set
 +CONFIG_GRACE_PERIOD=y
 +CONFIG_LOCKD=y
 +CONFIG_LOCKD_V4=y
