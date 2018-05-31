@@ -78,7 +78,7 @@
 ```shell
     cp tmp/deploy/images/imx6qsabresd/u-boot.imx-mfgtool mfg/firmware/u-boot-imx6qsabresd_sd.imx 
     cp tmp/deploy/images/imx6qsabresd/zImage_mfgtool mfg/firmware/zImage
-    cp tmp/deploy/images/imx6qsabresd/fsl-image-mfgtool-initramfs-imx6qsabresd.cpio.gz.u-boot     mfg/firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot
+    cp tmp/deploy/images/imx6qsabresd/fsl-image-mfgtool-initramfs-imx6qsabresd.cpio.gz.u-boot mfg/firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot
     cp tmp/deploy/images/imx6qsabresd/zImage-zImage-mfgtool-imx6q-sabresd.dtb mfg/firmware/zImage-imx6q-sabresd.dtb
     cp tmp/deploy/images/imx6qsabresd/u-boot-imx6qsabresd.imx-sd mfg/files/u-boot-imx6qsabresd_sd.imx
     cp tmp/deploy/images/imx6qsabresd/zImage mfg/files/zImage
