@@ -147,7 +147,7 @@ index 1f9f7a4..15476f9 100644
 -			linux,code = <KEY_POWER>;
 -		};
 +                power-off {
-+                        label = "Power On/Off";
++                        label = "Power On";
 +                        gpios = <&gpio4 5 GPIO_ACTIVE_LOW>;
 +                        wakeup-source;
 +                        linux,code = <KEY_POWER>;
