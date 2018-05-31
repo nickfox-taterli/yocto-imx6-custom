@@ -1,0 +1,407 @@
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 13a1295..86e1a7d 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -751,4 +751,10 @@ config KEYBOARD_BCM
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called bcm-keypad.
+ 
++config KEYBOARD_HS0038
++        tristate "hs0038 keypad driver"
++        depends on OF && HAVE_CLK
++        select INPUT_MATRIXKMAP
++        help
++          Say Y here if you want to use hs0038 keypad.
+ endif
+diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+index 0a613ac..aa212ff 100644
+--- a/drivers/input/keyboard/Makefile
++++ b/drivers/input/keyboard/Makefile
+@@ -3,6 +3,7 @@
+ #
+ 
+ # Each configuration option enables a list of files.
++obj-$(CONFIG_KEYBOARD_HS0038)           += hs0038.o
+ 
+ obj-$(CONFIG_KEYBOARD_ADC)		+= adc-keys.o
+ obj-$(CONFIG_KEYBOARD_ADP5520)		+= adp5520-keys.o
+diff --git a/drivers/input/keyboard/hs0038.c b/drivers/input/keyboard/hs0038.c
+index e69de29..f7cec9d 100644
+--- a/drivers/input/keyboard/hs0038.c
++++ b/drivers/input/keyboard/hs0038.c
+@@ -0,0 +1,375 @@
++#include <linux/module.h>
++
++#include <linux/init.h>
++#include <linux/fs.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/sched.h>
++#include <linux/pm.h>
++#include <linux/slab.h>
++#include <linux/sysctl.h>
++#include <linux/proc_fs.h>
++#include <linux/delay.h>
++#include <linux/platform_device.h>
++#include <linux/input.h>
++#include <linux/gpio_keys.h>
++#include <linux/workqueue.h>
++#include <linux/gpio.h>
++#include <asm/io.h>
++#include <linux/jiffies.h>
++#include <asm/irq.h>
++
++#define IMX_GPIO_NR(bank, nr)            (((bank) - 1) * 32 + (nr))
++
++static const unsigned int keycode[] =
++{
++    59,60,61,
++    62,63,64,
++    65,66,67,
++    11,68,1,
++    2,3,4,
++    5,6,7,
++    8,9,10,
++};
++
++struct ir
++{
++    unsigned int keycode[ARRAY_SIZE(keycode)];
++    struct input_dev *input;
++    spinlock_t lock;
++    struct gpio_keys_button *button;
++    struct work_struct hs0038_wp;
++};
++
++static unsigned char serial_data_read_byte(struct ir *hs0038_data)
++{
++
++    int j;
++    struct gpio_keys_button *button = hs0038_data->button;
++    unsigned char CodeTemp = 0;
++
++    for(j = 1; j <= 8; j++) //每个字节8个bit的判断
++    {
++        while(((gpio_get_value(button->gpio)) & 1) == 0 );      //等待上升沿
++        udelay(900);
++        if(((gpio_get_value(button->gpio)) & 1) == 1 )
++        {
++            udelay(900);
++            CodeTemp = CodeTemp | 0x80;
++            if(j < 8) CodeTemp = CodeTemp >> 1;
++        }
++        else if(j < 8)CodeTemp = CodeTemp >> 1; //如果是"0",则向右移一位，自动补"0"
++    }
++
++    return CodeTemp;
++
++}
++
++static int hs0038_read(struct ir *hs0038_data)
++{
++    unsigned char values[4];
++    int i = 0;
++    struct gpio_keys_button *button = hs0038_data->button;
++
++    gpio_direction_input(button->gpio);
++
++    while(((gpio_get_value(button->gpio)) & 1) == 0); //在9ms内判断IO口的值
++
++    while(((gpio_get_value(button->gpio)) & 1) == 1)
++    {
++        udelay(900);
++        if(i > 4)
++            return -1;
++        i++;
++    }
++
++    values[0] = serial_data_read_byte(hs0038_data);
++    values[1] = serial_data_read_byte(hs0038_data);
++    values[2] = serial_data_read_byte(hs0038_data);
++    values[3] = serial_data_read_byte(hs0038_data);
++
++    if(values[3] != 0xFF && i == 5)
++    {
++        /* printk("IR Value = 0x%x\n", values[3]); */
++
++		/* 淘宝山寨遥控,下面还写着Car-MP3. */
++		
++        switch(values[3])
++        {
++			case 0xBA:
++				i = 0;
++				break;
++			case 0xB9:
++				i = 1;
++				break;
++			case 0xB8:
++				i = 2;
++				break;
++			case 0xBB:
++				i = 3;
++				break;
++			case 0xBF:
++				i = 4;
++				break;
++			case 0xBC:
++				i = 5;
++				break;
++			case 0xF8:
++				i = 6;
++				break;
++			case 0xEA:
++				i = 7;
++				break;
++			case 0xF6:
++				i = 8;
++				break;
++			case 0xE9:
++				i = 9;
++				break;
++			case 0xE6:
++				i = 10;
++				break;
++			case 0xF2:
++				i = 11;
++				break;
++			case 0xF3:
++				i = 12;
++				break;
++			case 0xE7:
++				i = 13;
++				break;
++			case 0xA1:
++				i = 14;
++				break;
++			case 0xF7:
++				i = 15;
++				break;
++			case 0xE3:
++				i = 16;
++				break;
++			case 0xA5:
++				i = 17;
++				break;
++			case 0xBD:
++				i = 18;
++				break;
++			case 0xAD:
++				i = 19;
++				break;
++			case 0xB5:
++				i = 20;
++				break;
++			default:
++				return 0;			
++        }
++
++        input_report_key(hs0038_data->input, keycode[i], 1);
++        input_report_key(hs0038_data->input, keycode[i], 0);
++        input_sync(hs0038_data->input);
++    }
++
++    return 0;
++
++}
++
++void hs0038_do_work(struct work_struct *work)
++{
++    struct ir *hs0038;
++    int irq;
++    struct gpio_keys_button *button ;
++
++    hs0038 = container_of(work, struct ir, hs0038_wp);
++    button  = hs0038->button;
++    irq = gpio_to_irq(button->gpio);
++
++    hs0038_read(hs0038);
++    irq_set_irq_type(irq,  IRQF_TRIGGER_FALLING);
++    enable_irq(irq);
++}
++
++static irqreturn_t hs0038_interrupt(int irq, void *dev_id)
++{
++    struct ir *hs0038 = dev_id;
++
++    disable_irq_nosync(irq);
++
++    schedule_work(&hs0038->hs0038_wp);
++    return IRQ_HANDLED;
++}
++
++
++static int hs0038_setup_key(struct platform_device *pdev)
++{
++    struct ir *hs0038 = platform_get_drvdata(pdev);
++    struct gpio_keys_button *button = hs0038->button;
++    const char *desc = button->desc ? button->desc : "hs0038";
++    unsigned long irqflags;
++    int irq, error;
++
++    error  = gpio_request_one(button->gpio, GPIOF_IN, desc);
++    if (error < 0)
++    {
++        printk("failed to request GPIO %d, error %d\n", button->gpio, error);
++        goto fail2;
++    }
++
++    irq = gpio_to_irq(button->gpio);
++    if (irq < 0)
++    {
++        error = irq;
++        printk("Unable to get irq number for GPIO %d,error %d\n", button->gpio, error);
++        goto fail3;
++    }
++
++    irqflags = IRQF_TRIGGER_FALLING;
++
++    error = request_irq(irq, hs0038_interrupt, irqflags, desc, hs0038);
++    if (error)
++    {
++        printk("Unable to claim irq %d; error %d\n", irq, error);
++        goto fail3;
++    }
++    error = gpio_direction_input(button->gpio);
++    if (error < 0)
++    {
++        printk("failed to configure direction for GPIO %d , error %d\n", button->gpio, error);
++        goto fail3;
++    }
++    return 0;
++
++fail3:
++    gpio_free(button->gpio);
++fail2:
++    return error;
++}
++
++static int hs0038_probe(struct platform_device *pdev)
++{
++    int ret = 0;
++    unsigned int i = 0;
++    struct device *dev = &pdev->dev;
++    struct ir *hs0038;
++    struct input_dev *input;
++    struct gpio_keys_platform_data *pdata = pdev->dev.platform_data;
++
++    hs0038 = kzalloc(sizeof(struct ir), GFP_KERNEL);
++    hs0038->button = kzalloc(sizeof(struct gpio_keys_button), GFP_KERNEL);
++    input = input_allocate_device();
++    if (!input || !hs0038)
++    {
++        dev_err(dev, "failed to allocate state\n");
++        ret = -ENOMEM;
++        goto err_free_mem;
++    }
++
++    INIT_WORK(&hs0038->hs0038_wp, hs0038_do_work);
++    spin_lock_init(&hs0038->lock);
++    hs0038->input = input;
++
++    platform_set_drvdata(pdev, hs0038);
++
++    input->name = "hs0038";
++    input->phys = "hs0038";
++
++    input->id.bustype = BUS_HOST;
++    input->id.vendor = 0xabce;
++    input->id.product = 0xecba;
++    input->id.version = 0x0100;
++
++    input->evbit[0] = BIT(EV_KEY);
++    input->keycode = hs0038->keycode;
++    input->keycodesize = sizeof(unsigned int);
++    input->keycodemax = ARRAY_SIZE(keycode);
++    set_bit(EV_KEY, input->evbit);
++
++    for (i = 0; i < ARRAY_SIZE(keycode); i++)
++    {
++        hs0038->keycode[i] = keycode[i];
++        set_bit(hs0038->keycode[i], input->keybit);
++    }
++
++    hs0038->button->gpio = IMX_GPIO_NR(1, 6);
++    hs0038->button->desc = "hs0038";
++
++    ret = hs0038_setup_key(pdev);
++    if(ret)
++        goto err_gpio_free;
++    ret = input_register_device(input);
++    if (ret < 0)
++    {
++        printk(KERN_ERR "input_register_device() return %d!\n", ret);
++        goto  err_input_free;
++    }
++
++    printk("HS0038 Init OK!\n");
++
++    return 0;
++
++err_input_free:
++    input_free_device(input);
++err_gpio_free:
++    gpio_free(pdata->buttons[0].gpio);
++err_free_mem:
++    kfree(input);
++    kfree(hs0038->button);
++    kfree(hs0038);
++
++    return ret;
++}
++
++static int hs0038_remove(struct platform_device *pdev)
++{
++    return 0;
++}
++
++static int hs0038_suspend(struct device *dev)
++{
++    return 0;
++}
++
++static int hs0038_resume(struct device *dev)
++{
++    return 0;
++}
++static const struct dev_pm_ops hs0038_pm_ops =
++{
++    .suspend	= hs0038_suspend,
++    .resume		= hs0038_resume,
++};
++
++static const struct of_device_id  hs0038_of_match[] =
++{
++    { .compatible = "tl,hs0038", },
++    { },
++};
++
++static struct platform_driver hs0038_driver =
++{
++    .probe		= hs0038_probe,
++    .remove		= hs0038_remove,
++    .driver		= {
++        .name   = "hs0038",
++        .owner	= THIS_MODULE,
++#ifdef CONFIG_PM
++        .pm	= &hs0038_pm_ops,
++#endif
++        .of_match_table = of_match_ptr(hs0038_of_match),
++    },
++};
++
++static int __init hs0038_init(void)
++{
++    return platform_driver_register(&hs0038_driver);
++}
++
++static void __exit hs0038_exit(void)
++{
++    platform_driver_unregister(&hs0038_driver);
++}
++
++module_init(hs0038_init);
++module_exit(hs0038_exit);
++
++MODULE_AUTHOR("www.lijignquan.net");
++MODULE_DESCRIPTION("TaterLi NEC HS0038");
++MODULE_LICENSE("GPL");

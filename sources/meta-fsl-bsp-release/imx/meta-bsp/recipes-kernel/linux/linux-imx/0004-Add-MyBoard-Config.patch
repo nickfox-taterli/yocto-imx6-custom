@@ -1,8 +1,8 @@
 diff --git a/arch/arm/configs/imx6q_custom_defconfig b/arch/arm/configs/imx6q_custom_defconfig
-index e69de29..ce4ced0 100644
+index e69de29..4eee4c0 100644
 --- a/arch/arm/configs/imx6q_custom_defconfig
 +++ b/arch/arm/configs/imx6q_custom_defconfig
-@@ -0,0 +1,4796 @@
+@@ -0,0 +1,4797 @@
 +#
 +# Automatically generated file; DO NOT EDIT.
 +# Linux/arm 4.9.11 Kernel Configuration
@@ -1578,6 +1578,7 @@ index e69de29..ce4ced0 100644
 +# CONFIG_KEYBOARD_XTKBD is not set
 +# CONFIG_KEYBOARD_CAP11XX is not set
 +# CONFIG_KEYBOARD_BCM is not set
++CONFIG_KEYBOARD_HS0038=y
 +CONFIG_INPUT_MOUSE=y
 +CONFIG_MOUSE_PS2=m
 +CONFIG_MOUSE_PS2_ALPS=y
