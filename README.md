@@ -70,4 +70,19 @@
 
 ## EMMC烧录
 
- 1. 移植中(待测试)
+ 1. bitbake fsl-image-mfgtool-initramfs
+ 2. 相关文件复制出来就可以用,ucl.xml文件mkfs加上-F参数,mksdcard.sh.tar需要取消-uM参数并在下面声明,具体看我博客.
+
+## EMMC文件复制
+
+```shell
+    cp tmp/deploy/images/imx6qsabresd/u-boot.imx-mfgtool mfg/firmware/u-boot-imx6qsabresd_sd.imx 
+    cp tmp/deploy/images/imx6qsabresd/zImage_mfgtool mfg/firmware/zImage
+    cp tmp/deploy/images/imx6qsabresd/fsl-image-mfgtool-initramfs-imx6qsabresd.cpio.gz.u-boot
+    mfg/firmware/fsl-image-mfgtool-initramfs-imx_mfgtools.cpio.gz.u-boot
+    cp tmp/deploy/images/imx6qsabresd/zImage-zImage-mfgtool-imx6q-sabresd.dtb mfg/firmware/zImage-imx6q-sabresd.dtb
+    cp tmp/deploy/images/imx6qsabresd/u-boot-imx6qsabresd.imx-sd mfg/files/u-boot-imx6qsabresd_sd.imx
+    cp tmp/deploy/images/imx6qsabresd/zImage mfg/files/zImage
+    cp tmp/deploy/images/imx6qsabresd/zImage-imx6q-sabresd.dtb mfg/files/zImage-imx6q-sabresd.dtb
+    cp tmp/deploy/images/imx6qsabresd/fsl-image-qt5-imx6qsabresd.tar.bz2 mfg/files/rootfs.tar.bz2
+```
