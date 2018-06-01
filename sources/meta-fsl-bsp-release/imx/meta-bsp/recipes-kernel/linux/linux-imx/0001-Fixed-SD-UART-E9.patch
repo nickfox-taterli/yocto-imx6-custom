@@ -1,5 +1,5 @@
 diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index 1f9f7a4..15476f9 100644
+index 1f9f7a4..8f33158 100644
 --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
 +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
 @@ -17,47 +17,14 @@
@@ -197,21 +197,15 @@ index 1f9f7a4..15476f9 100644
 -		mic-det-gpios = <&gpio1 9 1>;
 -	};
 +        sound {
-+        compatible = "wlf,wm8960";
++        compatible = "fsl,imx-audio-wm8960";
 +        model = "wm8960-audio";
-+                cpu-dai = <&ssi2>; //CPU DAI 的 phandle
-+                audio-codec = <&codec>; //音频编解码器的 phandle
-+                asrc-controller = <&asrc>;
-+                codec-master; //codec master 模式
-+                gpr = <&gpr>; //GPR 寄存器的 phandle            
-+                hp-det = <3 0>; //耳机相关的定义
-+                hp-det-gpios = <&gpio1 31 1>; //耳机检测口定义为 GPIO5， 第四个 IO 口， 默认电平为低
-+                mic-det-gpios = <&gpio1 31 1>; //耳机检测口定义为 GPIO5， 第四个 IO 口， 默认电平为低           
-+       	        mux-int-port = <2>;
-+                mux-ext-port = <3>;
-+
-+                audio-routing =
-+           		"Headphone Jack", "HP_L", //HP_L --> Headphone Jack
++        cpu-dai = <&ssi2>;
++        audio-codec = <&codec>;
++        asrc-controller = <&asrc>;
++        gpr = <&gpr>; //GPR 寄存器的 phandle            
++        codec-master;
++        audio-routing =
++        		"Headphone Jack", "HP_L", //HP_L --> Headphone Jack
 +                        "Headphone Jack", "HP_R", //HP_R --> Headphone Jack
 +                        "Ext Spk", "SPK_LP", //SPK_LP --> Ext Spk
 +                        "Ext Spk", "SPK_LN", //SPK_LN --> Ext Spk
@@ -222,7 +216,13 @@ index 1f9f7a4..15476f9 100644
 +                        "RINPUT1", "Main MIC", //Main MIC --> RINPUT1
 +                        "RINPUT2", "Main MIC", //Main MIC --> RINPUT2
 +                        "Mic Jack", "MICB", //MICB --> Mic Jack
-+                        "Main MIC", "MICB"; //MICB --> Main MIC                 
++                        "Main MIC", "MICB"; //MICB --> Main MIC  
++
++        mux-int-port = <2>;
++        mux-ext-port = <3>;
++		hp-det = <3 0>; //耳机相关的定义
++                hp-det-gpios = <&gpio1 31 1>; //耳机检测口定义为 GPIO5， 第四个 IO 口， 默认电平为低
++                mic-det-gpios = <&gpio1 31 1>; //耳机检测口定义为 GPIO5， 第四个 IO 口， 默认电平为低           
 +        };
  
  	sound-hdmi {
@@ -355,7 +355,7 @@ index 1f9f7a4..15476f9 100644
  	status = "okay";
  };
  
-@@ -368,242 +240,51 @@
+@@ -368,242 +240,48 @@
  	pinctrl-0 = <&pinctrl_i2c1>;
  	status = "okay";
  
@@ -439,11 +439,13 @@ index 1f9f7a4..15476f9 100644
 -		interrupts = <8 2>;
 -		wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
 -	};
-+        codec: wm8962@1a { 
++        codec: wm8960@1a { 
 +                compatible = "wlf,wm8960";
 +                reg = <0x1a>;
 +                clocks = <&clks IMX6QDL_CLK_CKO>;
-+                DCVDD-supply = <&reg_audio>;
++		clock-names = "mclk";
++        
++       		DCVDD-supply = <&reg_audio>;
 +                DBVDD-supply = <&reg_audio>;
 +                AVDD-supply = <&reg_audio>;
 +                CPVDD-supply = <&reg_audio>;
@@ -451,14 +453,9 @@ index 1f9f7a4..15476f9 100644
 +                PLLVDD-supply = <&reg_audio>;
 +                SPKVDD1-supply = <&reg_audio>;
 +                SPKVDD2-supply = <&reg_audio>;
-+                gpio-cfg = <
-+                        0x0000 /* 0:Default */
-+                        0x0000 /* 1:Default */
-+                        0x0013 /* 2:FN_DMICCLK */
-+                        0x0000 /* 3:Default */
-+                        0x8014 /* 4:FN_DMICCDAT */
-+                        0x0000 /* 5:Default */
-+                >;
++    		wlf,shared-lrclk;
++     		wlf,capless;
++   		amic-mono;
 +        };
  
 -	max11801@48 {
@@ -628,7 +625,7 @@ index 1f9f7a4..15476f9 100644
  };
  
  &iomuxc {
-@@ -613,29 +294,10 @@
+@@ -613,29 +291,10 @@
  	imx6qdl-sabresd {
  		pinctrl_hog: hoggrp {
  			fsl,pins = <
@@ -659,7 +656,7 @@ index 1f9f7a4..15476f9 100644
  			>;
  		};
  
-@@ -648,27 +310,6 @@
+@@ -648,27 +307,6 @@
  			>;
  		};
  
@@ -687,7 +684,7 @@ index 1f9f7a4..15476f9 100644
  		pinctrl_enet: enetgrp {
  			fsl,pins = <
  				MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
-@@ -698,9 +339,9 @@
+@@ -698,9 +336,9 @@
  
  		pinctrl_gpio_keys: gpio_keysgrp {
  			fsl,pins = <
@@ -700,7 +697,7 @@ index 1f9f7a4..15476f9 100644
  			>;
  		};
  
-@@ -731,20 +372,6 @@
+@@ -731,20 +369,6 @@
  			>;
  		};
  
@@ -721,7 +718,7 @@ index 1f9f7a4..15476f9 100644
  		pinctrl_ipu1: ipu1grp {
  			fsl,pins = <
  				MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
-@@ -779,37 +406,6 @@
+@@ -779,37 +403,6 @@
  			>;
  		};
  
@@ -759,7 +756,7 @@ index 1f9f7a4..15476f9 100644
  		pinctrl_pwm1: pwm1grp {
  			fsl,pins = <
  				MX6QDL_PAD_SD1_DAT3__PWM1_OUT		0x1b0b1
-@@ -818,26 +414,8 @@
+@@ -818,26 +411,8 @@
  
  		pinctrl_uart1: uart1grp {
  			fsl,pins = <
@@ -788,7 +785,7 @@ index 1f9f7a4..15476f9 100644
  			>;
  		};
  
-@@ -855,10 +433,7 @@
+@@ -855,10 +430,7 @@
  				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
  				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
  				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
@@ -800,7 +797,7 @@ index 1f9f7a4..15476f9 100644
  			>;
  		};
  
-@@ -870,10 +445,6 @@
+@@ -870,10 +442,6 @@
  				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
  				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
  				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
@@ -811,12 +808,12 @@ index 1f9f7a4..15476f9 100644
  			>;
  		};
  
-@@ -897,87 +468,16 @@
+@@ -897,87 +465,16 @@
  				MX6QDL_PAD_GPIO_1__WDOG2_B 0x80000000
  			>;
  		};
 -	};
- 
+-
 -	gpio_leds {
 -		pinctrl_gpio_leds: gpioledsgrp {
 -			fsl,pins = <
@@ -828,12 +825,7 @@ index 1f9f7a4..15476f9 100644
 -
 -&ldb {
 -	status = "okay";
-+      		pinctrl_hs0038: hs0038 {
-+                	fsl,pins = <
-+                	        MX6QDL_PAD_GPIO_6__GPIO1_IO06 0x000b1
-+        	        >;
-+	        };
- 
+-
 -	lvds-channel@0 {
 -		fsl,data-mapping = "spwg";
 -		fsl,data-width = <18>;
@@ -853,13 +845,18 @@ index 1f9f7a4..15476f9 100644
 -				vsync-len = <10>;
 -			};
 -		};
- 	};
+-	};
  
 -	lvds-channel@1 {
 -		fsl,data-mapping = "spwg";
 -		fsl,data-width = <18>;
 -		primary;
 -		status = "okay";
++      		pinctrl_hs0038: hs0038 {
++                	fsl,pins = <
++                	        MX6QDL_PAD_GPIO_6__GPIO1_IO06 0x000b1
++        	        >;
++	        };
  
 -		display-timings {
 -			native-mode = <&timing1>;
@@ -875,9 +872,9 @@ index 1f9f7a4..15476f9 100644
 -				vsync-len = <10>;
 -			};
 -		};
--	};
+ 	};
 -};
--
+ 
 -&mipi_csi {
 -	status = "okay";
 -	ipu_id = <0>;
@@ -885,7 +882,7 @@ index 1f9f7a4..15476f9 100644
 -	v_channel = <0>;
 -	lanes = <2>;
 -};
--
+ 
 -&mipi_dsi {
 -	dev_id = <0>;
 -	disp_id = <1>;
@@ -904,7 +901,7 @@ index 1f9f7a4..15476f9 100644
  };
  
  &pwm1 {
-@@ -986,20 +486,8 @@
+@@ -986,30 +483,11 @@
  	status = "okay";
  };
  
@@ -926,7 +923,17 @@ index 1f9f7a4..15476f9 100644
  };
  
  &ssi2 {
-@@ -1020,7 +508,6 @@
+-	assigned-clocks = <&clks IMX6QDL_CLK_PLL4>,
+-			  <&clks IMX6QDL_PLL4_BYPASS>,
+-			  <&clks IMX6QDL_CLK_SSI2_SEL>;
+-	assigned-clock-parents = <&clks IMX6QDL_CLK_OSC>,
+-				 <&clks IMX6QDL_CLK_PLL4>,
+-				 <&clks IMX6QDL_CLK_PLL4_AUDIO_DIV>;
+-	assigned-clock-rates = <1179648000>, <0>, <0>;
+ 	status = "okay";
+ };
+ 
+@@ -1020,7 +498,6 @@
  };
  
  &usbh1 {
@@ -934,7 +941,7 @@ index 1f9f7a4..15476f9 100644
  	status = "okay";
  };
  
-@@ -1046,9 +533,9 @@
+@@ -1046,9 +523,9 @@
  &usdhc2 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&pinctrl_usdhc2>;
@@ -947,7 +954,7 @@ index 1f9f7a4..15476f9 100644
  	no-1-8-v;
  	keep-power-in-suspend;
  	enable-sdio-wakeup;
-@@ -1064,7 +551,7 @@
+@@ -1064,7 +541,7 @@
  	no-1-8-v;
  	keep-power-in-suspend;
  	enable-sdio-wakeup;
@@ -956,10 +963,3 @@ index 1f9f7a4..15476f9 100644
  };
  
  &usdhc4 {
-@@ -1085,5 +572,5 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_wdog>;
- 	fsl,ext-reset-output;
--	status = "okay";
-+	status = "disabled";
- };
