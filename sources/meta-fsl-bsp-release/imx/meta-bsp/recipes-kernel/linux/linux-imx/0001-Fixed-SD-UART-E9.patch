@@ -1,5 +1,5 @@
 diff --git a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
-index 1f9f7a4..8f33158 100644
+index 1f9f7a4..79b2396 100644
 --- a/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
 +++ b/arch/arm/boot/dts/imx6qdl-sabresd.dtsi
 @@ -17,47 +17,14 @@
@@ -334,7 +334,17 @@ index 1f9f7a4..8f33158 100644
  &fec {
  	pinctrl-names = "default";
  	pinctrl-0 = <&pinctrl_enet>;
-@@ -333,12 +212,6 @@
+@@ -324,7 +203,8 @@
+ };
+ 
+ &gpc {
+-	fsl,ldo-bypass = <1>;
++	fsl,ldo-bypass = <0>;
++	fsl,wdog-reset = <1>;
+ };
+ 
+ &dcic1 {
+@@ -333,12 +213,6 @@
  	status = "okay";
  };
  
@@ -347,7 +357,7 @@ index 1f9f7a4..8f33158 100644
  &hdmi_audio {
  	status = "okay";
  };
-@@ -358,7 +231,6 @@
+@@ -358,7 +232,6 @@
  &hdmi_video {
  	fsl,phy_reg_vlev = <0x0294>;
  	fsl,phy_reg_cksymtx = <0x800d>;
@@ -355,7 +365,7 @@ index 1f9f7a4..8f33158 100644
  	status = "okay";
  };
  
-@@ -368,242 +240,48 @@
+@@ -368,242 +241,48 @@
  	pinctrl-0 = <&pinctrl_i2c1>;
  	status = "okay";
  
@@ -439,6 +449,14 @@ index 1f9f7a4..8f33158 100644
 -		interrupts = <8 2>;
 -		wakeup-gpios = <&gpio6 8 GPIO_ACTIVE_HIGH>;
 -	};
+-
+-	max11801@48 {
+-		compatible = "maxim,max11801";
+-		reg = <0x48>;
+-		interrupt-parent = <&gpio3>;
+-		interrupts = <26 2>;
+-		work-mode = <1>;/*DCM mode*/
+-	};
 +        codec: wm8960@1a { 
 +                compatible = "wlf,wm8960";
 +                reg = <0x1a>;
@@ -458,14 +476,6 @@ index 1f9f7a4..8f33158 100644
 +   		amic-mono;
 +        };
  
--	max11801@48 {
--		compatible = "maxim,max11801";
--		reg = <0x48>;
--		interrupt-parent = <&gpio3>;
--		interrupts = <26 2>;
--		work-mode = <1>;/*DCM mode*/
--	};
--
 -	pmic: pfuze100@08 {
 -		compatible = "fsl,pfuze100";
 -		reg = <0x08>;
@@ -625,7 +635,7 @@ index 1f9f7a4..8f33158 100644
  };
  
  &iomuxc {
-@@ -613,29 +291,10 @@
+@@ -613,29 +292,10 @@
  	imx6qdl-sabresd {
  		pinctrl_hog: hoggrp {
  			fsl,pins = <
@@ -656,7 +666,7 @@ index 1f9f7a4..8f33158 100644
  			>;
  		};
  
-@@ -648,27 +307,6 @@
+@@ -648,27 +308,6 @@
  			>;
  		};
  
@@ -684,7 +694,7 @@ index 1f9f7a4..8f33158 100644
  		pinctrl_enet: enetgrp {
  			fsl,pins = <
  				MX6QDL_PAD_ENET_MDIO__ENET_MDIO		0x1b0b0
-@@ -698,9 +336,9 @@
+@@ -698,9 +337,9 @@
  
  		pinctrl_gpio_keys: gpio_keysgrp {
  			fsl,pins = <
@@ -697,7 +707,7 @@ index 1f9f7a4..8f33158 100644
  			>;
  		};
  
-@@ -731,20 +369,6 @@
+@@ -731,20 +370,6 @@
  			>;
  		};
  
@@ -718,7 +728,7 @@ index 1f9f7a4..8f33158 100644
  		pinctrl_ipu1: ipu1grp {
  			fsl,pins = <
  				MX6QDL_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK 0x10
-@@ -779,37 +403,6 @@
+@@ -779,37 +404,6 @@
  			>;
  		};
  
@@ -756,7 +766,7 @@ index 1f9f7a4..8f33158 100644
  		pinctrl_pwm1: pwm1grp {
  			fsl,pins = <
  				MX6QDL_PAD_SD1_DAT3__PWM1_OUT		0x1b0b1
-@@ -818,26 +411,8 @@
+@@ -818,26 +412,8 @@
  
  		pinctrl_uart1: uart1grp {
  			fsl,pins = <
@@ -785,7 +795,7 @@ index 1f9f7a4..8f33158 100644
  			>;
  		};
  
-@@ -855,10 +430,7 @@
+@@ -855,10 +431,7 @@
  				MX6QDL_PAD_SD2_DAT1__SD2_DATA1		0x17059
  				MX6QDL_PAD_SD2_DAT2__SD2_DATA2		0x17059
  				MX6QDL_PAD_SD2_DAT3__SD2_DATA3		0x17059
@@ -797,7 +807,7 @@ index 1f9f7a4..8f33158 100644
  			>;
  		};
  
-@@ -870,10 +442,6 @@
+@@ -870,10 +443,6 @@
  				MX6QDL_PAD_SD3_DAT1__SD3_DATA1		0x17059
  				MX6QDL_PAD_SD3_DAT2__SD3_DATA2		0x17059
  				MX6QDL_PAD_SD3_DAT3__SD3_DATA3		0x17059
@@ -808,7 +818,7 @@ index 1f9f7a4..8f33158 100644
  			>;
  		};
  
-@@ -897,87 +465,16 @@
+@@ -897,87 +466,16 @@
  				MX6QDL_PAD_GPIO_1__WDOG2_B 0x80000000
  			>;
  		};
@@ -822,10 +832,15 @@ index 1f9f7a4..8f33158 100644
 -		};
 -	};
 -};
--
+ 
 -&ldb {
 -	status = "okay";
--
++      		pinctrl_hs0038: hs0038 {
++                	fsl,pins = <
++                	        MX6QDL_PAD_GPIO_6__GPIO1_IO06 0x000b1
++        	        >;
++	        };
+ 
 -	lvds-channel@0 {
 -		fsl,data-mapping = "spwg";
 -		fsl,data-width = <18>;
@@ -845,18 +860,13 @@ index 1f9f7a4..8f33158 100644
 -				vsync-len = <10>;
 -			};
 -		};
--	};
+ 	};
  
 -	lvds-channel@1 {
 -		fsl,data-mapping = "spwg";
 -		fsl,data-width = <18>;
 -		primary;
 -		status = "okay";
-+      		pinctrl_hs0038: hs0038 {
-+                	fsl,pins = <
-+                	        MX6QDL_PAD_GPIO_6__GPIO1_IO06 0x000b1
-+        	        >;
-+	        };
  
 -		display-timings {
 -			native-mode = <&timing1>;
@@ -872,9 +882,9 @@ index 1f9f7a4..8f33158 100644
 -				vsync-len = <10>;
 -			};
 -		};
- 	};
+-	};
 -};
- 
+-
 -&mipi_csi {
 -	status = "okay";
 -	ipu_id = <0>;
@@ -882,7 +892,7 @@ index 1f9f7a4..8f33158 100644
 -	v_channel = <0>;
 -	lanes = <2>;
 -};
- 
+-
 -&mipi_dsi {
 -	dev_id = <0>;
 -	disp_id = <1>;
@@ -901,7 +911,7 @@ index 1f9f7a4..8f33158 100644
  };
  
  &pwm1 {
-@@ -986,30 +483,11 @@
+@@ -986,30 +484,11 @@
  	status = "okay";
  };
  
@@ -933,7 +943,7 @@ index 1f9f7a4..8f33158 100644
  	status = "okay";
  };
  
-@@ -1020,7 +498,6 @@
+@@ -1020,7 +499,6 @@
  };
  
  &usbh1 {
@@ -941,7 +951,7 @@ index 1f9f7a4..8f33158 100644
  	status = "okay";
  };
  
-@@ -1046,9 +523,9 @@
+@@ -1046,9 +524,9 @@
  &usdhc2 {
  	pinctrl-names = "default";
  	pinctrl-0 = <&pinctrl_usdhc2>;
@@ -954,7 +964,7 @@ index 1f9f7a4..8f33158 100644
  	no-1-8-v;
  	keep-power-in-suspend;
  	enable-sdio-wakeup;
-@@ -1064,7 +541,7 @@
+@@ -1064,7 +542,7 @@
  	no-1-8-v;
  	keep-power-in-suspend;
  	enable-sdio-wakeup;
@@ -963,3 +973,18 @@ index 1f9f7a4..8f33158 100644
  };
  
  &usdhc4 {
+@@ -1078,12 +556,9 @@
+ };
+ 
+ &wdog1 {
+-	status = "disabled";
++	status = "okay";
+ };
+ 
+ &wdog2 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_wdog>;
+-	fsl,ext-reset-output;
+-	status = "okay";
++	status = "disabled";
+ };
