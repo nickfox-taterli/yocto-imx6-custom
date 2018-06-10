@@ -1,5 +1,89 @@
+diff --git a/sound/soc/codecs/wm8960.c b/sound/soc/codecs/wm8960.c
+index 956c5d0..2d671e5 100644
+--- a/sound/soc/codecs/wm8960.c
++++ b/sound/soc/codecs/wm8960.c
+@@ -408,33 +408,17 @@ SND_SOC_DAPM_PGA("OUT3 VMID", WM8960_POWER2, 1, 0, NULL, 0),
+ };
+ 
+ static const struct snd_soc_dapm_route audio_paths[] = {
+-	{ "Left Boost Mixer", "LINPUT1 Switch", "LINPUT1" },
+-	{ "Left Boost Mixer", "LINPUT2 Switch", "LINPUT2" },
+-	{ "Left Boost Mixer", "LINPUT3 Switch", "LINPUT3" },
++	{ "Left Boost Mixer", "LINPUT1 Switch", "LINPUT1" }, /* 打通LMN1开关. */
++	{ "Left Input Mixer", "Boost Switch", "Left Boost Mixer" }, /* 打通LMIC2B开关 */
++	{ "Left Input Mixer", "Boost Switch", "LINPUT1" },  /* 关联LINPUT1 */
++	{ "Left ADC", NULL, "Left Input Mixer" }, /* 做声道DAC使能. */
+ 
+-	{ "Left Input Mixer", "Boost Switch", "Left Boost Mixer" },
+-	{ "Left Input Mixer", "Boost Switch", "LINPUT1" },  /* Really Boost Switch */
+-	{ "Left Input Mixer", NULL, "LINPUT2" },
+-	{ "Left Input Mixer", NULL, "LINPUT3" },
+-
+-	{ "Right Boost Mixer", "RINPUT1 Switch", "RINPUT1" },
+-	{ "Right Boost Mixer", "RINPUT2 Switch", "RINPUT2" },
+-	{ "Right Boost Mixer", "RINPUT3 Switch", "RINPUT3" },
+-
+-	{ "Right Input Mixer", "Boost Switch", "Right Boost Mixer" },
+-	{ "Right Input Mixer", "Boost Switch", "RINPUT1" },  /* Really Boost Switch */
+-	{ "Right Input Mixer", NULL, "RINPUT2" },
+-	{ "Right Input Mixer", NULL, "RINPUT3" },
+-
+-	{ "Left ADC", NULL, "Left Input Mixer" },
+-	{ "Right ADC", NULL, "Right Input Mixer" },
+-
+-	{ "Left Output Mixer", "LINPUT3 Switch", "LINPUT3" },
+-	{ "Left Output Mixer", "Boost Bypass Switch", "Left Boost Mixer" },
++	/* { "Left Output Mixer", "Boost Bypass Switch", "Left Boost Mixer" }, */
++	/* { "Left Output Mixer", "<- LD2LO", "Left DAC" }, <= 等效 */
+ 	{ "Left Output Mixer", "PCM Playback Switch", "Left DAC" },
+-
+-	{ "Right Output Mixer", "RINPUT3 Switch", "RINPUT3" },
+-	{ "Right Output Mixer", "Boost Bypass Switch", "Right Boost Mixer" },
++	
++	/* { "Right Output Mixer", "Boost Bypass Switch", "Right Boost Mixer" }, */
++	/* { "Right Output Mixer", "<- RD2RO", "Left DAC" }, <= 等效 */
+ 	{ "Right Output Mixer", "PCM Playback Switch", "Right DAC" },
+ 
+ 	{ "LOUT1 PGA", NULL, "Left Output Mixer" },
+@@ -451,23 +435,16 @@ static const struct snd_soc_dapm_route audio_paths[] = {
+ 
+ 	{ "SPK_LN", NULL, "Left Speaker Output" },
+ 	{ "SPK_LP", NULL, "Left Speaker Output" },
+-	{ "SPK_RN", NULL, "Right Speaker Output" },
+-	{ "SPK_RP", NULL, "Right Speaker Output" },
+ };
+ 
+ static const struct snd_soc_dapm_route audio_paths_out3[] = {
+ 	{ "Mono Output Mixer", "Left Switch", "Left Output Mixer" },
+ 	{ "Mono Output Mixer", "Right Switch", "Right Output Mixer" },
+-
+-	{ "OUT3", NULL, "Mono Output Mixer", }
+ };
+ 
+ static const struct snd_soc_dapm_route audio_paths_capless[] = {
+ 	{ "HP_L", NULL, "OUT3 VMID" },
+ 	{ "HP_R", NULL, "OUT3 VMID" },
+-
+-	{ "OUT3 VMID", NULL, "Left Output Mixer" },
+-	{ "OUT3 VMID", NULL, "Right Output Mixer" },
+ };
+ 
+ static int wm8960_add_widgets(struct snd_soc_codec *codec)
+@@ -1197,9 +1174,12 @@ static int wm8960_set_pll(struct snd_soc_codec *codec,
+ 	snd_soc_write(codec, WM8960_PLL1, reg);
+ 
+ 	/* Turn it on */
++	
++	/* 打开PLL */
+ 	snd_soc_update_bits(codec, WM8960_POWER2, 0x1, 0x1);
+ 	msleep(250);
+ 	snd_soc_update_bits(codec, WM8960_CLOCK1, 0x1, 0x1);
++	
+ 
+ 	return 0;
+ }
 diff --git a/sound/soc/fsl/imx-wm8960.c b/sound/soc/fsl/imx-wm8960.c
-index 8dbf997..91b7922 100644
+index 8dbf997..f200bbe 100644
 --- a/sound/soc/fsl/imx-wm8960.c
 +++ b/sound/soc/fsl/imx-wm8960.c
 @@ -24,7 +24,7 @@
@@ -25,7 +109,21 @@ index 8dbf997..91b7922 100644
  	if (!data->is_codec_master) {
  		ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
  				SNDRV_PCM_HW_PARAM_RATE, &imx_wm8960_rate_constraints);
-@@ -453,70 +446,130 @@ static int of_parse_gpr(struct platform_device *pdev,
+@@ -359,10 +352,13 @@ static int imx_wm8960_late_probe(struct snd_soc_card *card)
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL4, 7<<4, 3<<4);
+ 
+ 	/* Enable headphone jack detect */
++
++	/*
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL2, 1<<6, 1<<6);
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL2, 1<<5, data->hp_det[1]<<5);
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL4, 3<<2, data->hp_det[0]<<2);
+ 	snd_soc_update_bits(codec, WM8960_ADDCTL1, 3, 3);
++	*/
+ 
+ 	return 0;
+ }
+@@ -453,70 +449,130 @@ static int of_parse_gpr(struct platform_device *pdev,
  
  static int imx_wm8960_probe(struct platform_device *pdev)
  {
@@ -165,16 +263,16 @@ index 8dbf997..91b7922 100644
 +			dev_err(&pdev->dev, "failed to get gpr regmap\n");
 +			goto fail;
 +		}
-+
+ 
+-	of_property_read_u32_array(pdev->dev.of_node, "hp-det", data->hp_det, 2);
 +		/* set SAI2_MCLK_DIR to enable codec MCLK for imx7d */
 +		regmap_update_bits(data->gpr, 4, 1 << 20, 1 << 20);
 +	}
  
--	of_property_read_u32_array(pdev->dev.of_node, "hp-det", data->hp_det, 2);
-+	of_property_read_u32_array(np, "hp-det", data->hp_det, 2);
- 
 -	asrc_np = of_parse_phandle(pdev->dev.of_node, "asrc-controller", 0);
 -	if (asrc_np) {
++	of_property_read_u32_array(np, "hp-det", data->hp_det, 2);
++
 +	asrc_np = of_parse_phandle(np, "asrc-controller", 0);
 +	if (asrc_np)
 +	{
