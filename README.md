@@ -21,7 +21,7 @@
 > * 对于RAM小于4G的同学,建议单线程编译.(即虚拟机编译只分配一个CPU或物理机编译修改conf文件)
 > * 对于首次编译时间,在4个小时以上也是正常的,最好配备SSD,这样会有不少提升.
 > * 编译参考教程:https://www.lijingquan.net/archives/4489
-> * EMMC烧写工具:Mfgtools-Rel-4.1.0_130816_MX6Q_UPDATER 参考下载地址:https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_6DQ_MFG_TOOL
+> * EMMC烧写工具:IMX6_L5.1_2.1.0_MFG_TOOL.tar 参考下载地址:https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_6DQ_MFG_TOOL
 
 ------
 
