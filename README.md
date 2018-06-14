@@ -23,6 +23,10 @@
 > * 编译参考教程:https://www.lijingquan.net/archives/4489
 > * EMMC烧写工具:IMX6_L5.1_2.1.0_MFG_TOOL.tar 参考下载地址:https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_6DQ_MFG_TOOL
 
+网友制作的离线软件包文件,解压后放到DL_DIR指向的路径,就可以实现无网络编译.
+
+[![Download yocto-imx6-custom](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/yocto-imx6-custom/files/latest/download)
+
 ------
 
 ## 系统环境
